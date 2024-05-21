@@ -9,6 +9,7 @@ import '../provider/orgs_provider.dart';
 import '../models/donation.dart'; 
 import 'firebase_options.dart';
 import 'provider/donation_provider.dart';
+import 'pages/org_profile.dart';
 
 
 Future<void> main() async {
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
         '/organizations': (context) => OrgsPage(),
         '/donatePage': (context) => FormSample(),
         '/donorProfile': (context) => ProfilePage(),
+        '/orgProfile': (context) => OrgProfile(),
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,
