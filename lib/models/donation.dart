@@ -6,8 +6,9 @@ class Donation {
   final String weight;
   final String? photo;
   final DateTime dateTime;
-  final List<String> addresses;
+  final String addresses;
   final String contactNumber;
+  final String status;
 
   Donation({
     required this.categories,
@@ -17,6 +18,7 @@ class Donation {
     required this.dateTime,
     required this.addresses,
     required this.contactNumber,
+    required this.status
   });
 
   // Factory constructor to instantiate object from json format
@@ -29,6 +31,7 @@ class Donation {
       dateTime: DateTime.parse(json['dateTime']),
       addresses: json['addresses'],
       contactNumber: json['contactNumber'], 
+      status: json['status']
     );
   }
 
@@ -46,6 +49,7 @@ class Donation {
       'dateTime': donation.dateTime.toString(),
       'addresses': donation.addresses,
       'contactNumber': donation.contactNumber,
+      'status': donation.status,
     };
   }
 

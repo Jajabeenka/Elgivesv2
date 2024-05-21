@@ -28,6 +28,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             title: Text("Organization", style: TextStyle(color: Color.fromARGB(255, 5, 12, 49))),
             onTap: () {
               Navigator.popUntil(context, ModalRoute.withName("/organizations"));
+              // Navigator.pop(context);
+              // Navigator.pushNamed(context, "/organizations");
             },
           ),
           ListTile(

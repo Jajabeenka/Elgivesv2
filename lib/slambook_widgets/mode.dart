@@ -12,20 +12,22 @@ class Mode extends StatefulWidget {
 
   @override
   _ModeState createState() => _ModeState();
-
-  static final List<String> _dropdownOptions = [
-    "Pickup",
-    "Drop-off",
-  ];
 }
 
 class _ModeState extends State<Mode> {
-  late String _dropdownValue;
+  String _mode = "Pickup";
 
   @override
   void initState() {
     super.initState();
-    _dropdownValue = widget.initialValue;
+    _mode = widget.initialValue;
+  }
+
+  void _toggleMode() {
+    setState(() {
+      _mode = _mode == "Pickup" ? "Drop-off" : "Pickup";
+    });
+    widget.onChanged(_mode);
   }
 
   @override
@@ -47,57 +49,37 @@ class _ModeState extends State<Mode> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: Text(
-              'Select Mode:',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF01563F),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          //   child: Text(
+          //     'Select Mode:',
+          //     style: TextStyle(
+          //       fontSize: 18,
+          //       fontWeight: FontWeight.bold,
+          //       color: Color(0xFF01563F),
+          //     ),
+          //   ),
+          // ),
+          SizedBox(height: 10),
+          GestureDetector(
+            onTap: _toggleMode,
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 10),
+              padding: EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                color: Color(0xFF8D1436),
+                borderRadius: BorderRadius.circular(8),
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10), 
-            child: DropdownButtonFormField<String>(
-              decoration: InputDecoration(
-                contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    color: Color(0xFF8D1436),
-                    width: 2,
+              child: Center(
+                child: Text(
+                  _mode,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    color: Color(0xFF8D1436),
-                    width: 2,
-                  ),
-                ),
               ),
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-              ),
-              value: _dropdownValue,
-              items: Mode._dropdownOptions.map((option) {
-                return DropdownMenuItem<String>(
-                  child: Text(
-                    option,
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  value: option,
-                );
-              }).toList(),
-              onChanged: (val) {
-                setState(() {
-                  _dropdownValue = val!;
-                });
-                widget.onChanged(val!);
-              },
             ),
           ),
           SizedBox(height: 10),
