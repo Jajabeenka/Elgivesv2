@@ -26,12 +26,7 @@ class _OrganizationSignUpPageState extends State<OrganizationSignUpPage> {
     return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
   }
 
-  // RegExp for password validation
-  bool isValidPassword(String password) {
-    return RegExp(
-            r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{6,}$')
-        .hasMatch(password);
-  }
+ 
 
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -88,7 +83,6 @@ class _OrganizationSignUpPageState extends State<OrganizationSignUpPage> {
                 SizedBox(height: 26.0), // Spacing between fields and buttons
                 submitButton,
                 SizedBox(height: 15.0), // Additional spacing
-                GoogleSignInButton(),
                 signInButton(),
               ],
             ),
@@ -223,8 +217,7 @@ class _OrganizationSignUpPageState extends State<OrganizationSignUpPage> {
           validator: (value) {
             if (value == null ||
                 value.isEmpty ||
-                value.length < 6 ||
-                !isValidPassword(value)) {
+                value.length < 6 ) {
               return "Password must be at least 6 characters and contain letters, numbers, and special characters.";
             }
             return null;
@@ -340,35 +333,6 @@ class _OrganizationSignUpPageState extends State<OrganizationSignUpPage> {
         ),
       );
 
-  Widget GoogleSignInButton() => ElevatedButton(
-        onPressed: () async {},
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFF01563F), // Button background color
-          textStyle: TextStyle(color: Colors.white), // Text color
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0), // Rounded corners
-          ),
-          padding: EdgeInsets.symmetric(vertical: 12.0), // Button padding
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              color: Colors.white,
-              FontAwesomeIcons.google,
-            ),
-            SizedBox(width: 10.0), // Spacing between icon and text
-            Text(
-              "Sign in with Google",
-              style: TextStyle(
-                color: Color(0xFFFFC107),
-                fontWeight: FontWeight.bold,
-                fontSize: 16.0,
-              ),
-            ),
-          ],
-        ),
-      );
 
   Widget signInButton() {
     return Padding(
