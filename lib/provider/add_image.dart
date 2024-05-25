@@ -16,10 +16,10 @@ class StoreData {
     return downloadUrl;
   }
 
-  Future<String> saveData({required Uint8List file}) async {
+  Future<String> saveData({required Uint8List file, required int index}) async {
     String resp = 'Some Error Occured';
     try {
-      String imageURL = await uploadImageToStorage('DonationImage', file);
+      String imageURL = await uploadImageToStorage('DonationImage_$index', file);
       // await _firestore.collection('donationImages').add({
       //   'imageLink': imageURL,
       // });

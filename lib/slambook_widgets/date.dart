@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
 
 class Date extends StatefulWidget {
   final Function(DateTime) callback;
@@ -36,6 +38,7 @@ class _DateState extends State<Date> {
 
   @override
   Widget build(BuildContext context) {
+    String currentDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -61,7 +64,7 @@ class _DateState extends State<Date> {
                     Text(
                       selectedDate != null
                           ? 'Selected Date: ${selectedDate!.toString().split(' ')[0]}'
-                          : 'Select Date',
+                          : 'Select Date: ${currentDate}',
                       style: TextStyle(
                         color: Color(0xFFFFC107),
                         fontSize: 16,

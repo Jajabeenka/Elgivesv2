@@ -52,6 +52,7 @@ class _FormSampleState extends State<FormSample> {
   DateTime dateTime = DateTime.now();
   String addresses = "";
   String contact = "";
+  String status = "Pending";
 
   void resetFields() {
   setState(() {
@@ -62,6 +63,7 @@ class _FormSampleState extends State<FormSample> {
     dateTime = DateTime.now();
     addresses = ""; 
     contact = "";
+    status = "Pending";
   });
 
   setState(() {
@@ -85,24 +87,49 @@ class _FormSampleState extends State<FormSample> {
   
   late Mode pickDrop;
   String data = '';
-  final GlobalKey _qrkey = GlobalKey();  
+  final GlobalKey _qrkey = GlobalKey();
   bool dirExists = false;
-  String externalDir = '/Storage/emulated/0/Download/QR_Code'; 
+  late String externalDir;
+  int i = 1;
 
-  Future<void> _captureandSavePng() async {
-    try {
+Future<void> _captureandSavePng() async {
+  try {
+    // Request storage permission
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      status = await Permission.storage.request();
+    }
+
+    // Handle MANAGE_EXTERNAL_STORAGE permission for Android 11 and above
+    if (Platform.isAndroid && await Permission.manageExternalStorage.isGranted == false) {
+      var manageStatus = await Permission.manageExternalStorage.status;
+      if (!manageStatus.isGranted) {
+        manageStatus = await Permission.manageExternalStorage.request();
+      }
+    }
+
+    if (status.isGranted || (Platform.isAndroid && await Permission.manageExternalStorage.isGranted)) {
       RenderRepaintBoundary boundary = _qrkey.currentContext!.findRenderObject() as RenderRepaintBoundary;
       var image = await boundary.toImage(pixelRatio: 3);
 
       final whitePaint = Paint()..color = Colors.white;
       final recorder = PictureRecorder();
-      final canvas = Canvas(recorder, Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()));
-      canvas.drawRect(Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()), whitePaint);
+      final canvas = Canvas(recorder,
+          Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()));
+      canvas.drawRect(
+          Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
+          whitePaint);
       canvas.drawImage(image, Offset.zero, Paint());
       final picture = recorder.endRecording();
       final img = await picture.toImage(image.width, image.height);
       ByteData? byteData = await img.toByteData(format: ImageByteFormat.png);
       Uint8List pngBytes = byteData!.buffer.asUint8List();
+
+      // Get the Downloads directory
+      final downloadsDirectory = await getExternalStorageDirectory();
+      final downloadDir = '${downloadsDirectory!.parent.parent.parent.parent.path}/Download';
+
+      externalDir = '$downloadDir/QR_Code';
 
       String filename = 'qr_code';
       int i = 1;
@@ -121,19 +148,32 @@ class _FormSampleState extends State<FormSample> {
       await file.writeAsBytes(pngBytes);
 
       if (!mounted) return;
-      const snackBar = SnackBar(content: Text("QR Code saved to gallery!"),);
+      const snackBar = SnackBar(
+        content: Text("QR Code saved to Downloads/QR_Code!"),
+      );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    } catch(e) {
-      print('Error: $e'); 
-      const snackBar = SnackBar(content: Text("Something went wrong!"),);
+      print('File saved to: $externalDir/$filename.png');
+    } else {
+      const snackBar = SnackBar(
+        content: Text("Storage permission denied"),
+      );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
+  } catch (e) {
+    print('Error: $e');
+    const snackBar = SnackBar(
+      content: Text("Something went wrong!"),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
+}
 
 
 
+int index = 1;
 Future<String> saveProfile() async{
-  String resp = await StoreData().saveData(file: _image!);
+  String resp = await StoreData().saveData(file: _image!, index: index);
+  index++;
   return resp;
 }
 
@@ -309,27 +349,58 @@ Future<String> saveProfile() async{
                 });
               }),
               Stack(
+                alignment: Alignment.center,
                 children: [
-                  _image !=  null ? 
-                  CircleAvatar(
-                    radius: 30, 
-                    backgroundImage: MemoryImage(_image!),
-                    ):
-                  const CircleAvatar(
-                    radius: 30, 
-                    child: Icon(
-                      Icons.person,
-                      color: Color(0xFFFFC107),
-                      size: 36,
+                  Container(
+                    width: 300,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
                     ),
-                    backgroundColor: Colors.white,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: _image != null
+                          ? Image.memory(
+                              _image!,
+                              fit: BoxFit.cover,
+                              width: 300,
+                              height: 100,
+                            )
+                          : Center(
+                              child: Icon(
+                                Icons.person,
+                                color: Color(0xFFFFC107),
+                                size: 36,
+                              ),
+                            ),
+                    ),
                   ),
-                  Positioned(child: IconButton(
-                    onPressed: selectImage,
-                    icon: const Icon(Icons.add_a_photo),),
-                    bottom: -10,
-                    left: 30,
-                    )
+                  Positioned(
+                    bottom: 5,
+                    right: 5,
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Color(0xFFFFC107),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        onPressed: selectImage,
+                        icon: Icon(Icons.add_a_photo),
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                 ],
               ),
               Date((date) {
@@ -378,10 +449,11 @@ Future<String> saveProfile() async{
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: 10.0),
-                    backgroundColor: (dateTime.isBefore(DateTime.now()))
-                        ? Colors.grey.shade400
-                        : Color.fromARGB(255, 80, 196, 90),
-                    disabledBackgroundColor: Colors.grey.shade400,
+                    backgroundColor:
+                    // (dateTime.isBefore(DateTime.now()))
+                        // ? Colors.grey.shade400
+                         Color.fromARGB(255, 80, 196, 90),
+                    // disabledBackgroundColor: Colors.grey.shade400,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -441,9 +513,9 @@ Future<String> saveProfile() async{
             borderRadius: BorderRadius.circular(8),
           ),
         ),
-        onPressed: () {
+        onPressed: (dateTime.isBefore(DateTime.now())) ? null :() =>  () {
           setState(() {
-            data = dateTime.toString();
+            data = "Status: Pending\nDate Created: ${dateTime.toString()}";
           });
           showDialog(
             context: context,
@@ -512,18 +584,18 @@ Future<String> saveProfile() async{
             },
           );
         },
-        icon: Icon(Icons.qr_code, size: 25),
-        label: Text(
-          "GENERATE QR CODE",
-          style: TextStyle(
-            color: Color.fromARGB(255, 7, 6, 0),
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
+              icon: Icon(Icons.qr_code, size: 25),
+              label: Text(
+                "GENERATE QR CODE",
+                style: TextStyle(
+                  color: Color.fromARGB(255, 7, 6, 0),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+            ),
           ),
         ),
-      ),
-    ),
-  ),
               Container(
                 margin: EdgeInsets.all(10),
                 child: SizedBox(

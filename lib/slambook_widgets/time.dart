@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Time extends StatefulWidget {
   final Function(TimeOfDay) callback;
@@ -54,7 +55,8 @@ class _TimeState extends State<Time> {
               Text(
                 selectedTime != null
                     ? 'Selected Time: ${selectedTime!.format(context)}'
-                    : 'Select Time',
+                    : 'Select Time ${DateFormat.Hm().format(DateTime.now())}'
+,
                 style: TextStyle(
                   color: Color(0xFFFFC107),
                   fontSize: 16,

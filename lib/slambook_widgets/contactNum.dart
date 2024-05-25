@@ -50,7 +50,7 @@ class _contactNumberState extends State<contactNumber> {
           // ),
           SizedBox(height: 10),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: TextFormField(
               controller: _contactNumberController,
               style: TextStyle(
