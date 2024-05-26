@@ -1,3 +1,4 @@
+import 'package:elgivesv2/pages/orgsPage.dart';
 import 'package:elgivesv2/pages/userAdmin/organization_signup.dart';
 import 'package:elgivesv2/pages/userAdmin/signin_page.dart';
 import 'package:flutter/material.dart';
@@ -329,12 +330,21 @@ class _SignUpState extends State<SignUpPage> {
                     addresses!,
                     contactNumber!,
                   );
+             // Automatically sign in the user after successful sign up
+              await context.read<UserAuthProvider>().signIn(email!, password!);
+
               // Handle successful signup (navigate or show message)
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text("Sign-up successful!"),
+                  content: Text("Sign-up and sign-in successful!"),
                   duration: const Duration(seconds: 2),
                 ),
+              );
+
+              // Navigate to the next page after successful sign-in
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => OrgsPage()), // Replace NextPage with the desired page
               );
             } catch (e) {
               // Handle signup errors
