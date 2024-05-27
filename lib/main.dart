@@ -16,7 +16,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
-import 'providers/todo_provider.dart';
 import 'providers/auth_provider.dart';
 
 Future<void> main() async {
@@ -31,7 +30,6 @@ Future<void> main() async {
         ChangeNotifierProvider(create: ((context) => DonationProvider())),
         ChangeNotifierProvider(create: ((context) => OrganizationProvider())),
         ChangeNotifierProvider(create: ((context) => DonorProvider())),
-        ChangeNotifierProvider(create: ((context) => TodoListProvider())),
         ChangeNotifierProvider(create: ((context) => UserAuthProvider()))
       ],
       child: MyApp(),

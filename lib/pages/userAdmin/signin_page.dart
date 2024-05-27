@@ -1,3 +1,4 @@
+import 'package:elgivesv2/api/firebase_auth_api.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
@@ -162,7 +163,13 @@ class _SignInPageState extends State<SignInPage> {
       );
 
   Widget get submitButton => ElevatedButton(
+
+
+
         onPressed: () async {
+
+        // AppUser? user = await FirebaseAuthAPI().signIn(email, password);
+
           if (_formKey.currentState!.validate()) {
             _formKey.currentState!.save();
             String? message = await context
@@ -173,6 +180,8 @@ class _SignInPageState extends State<SignInPage> {
             setState(() {
               showSignInErrorMessage = message != null && message.isNotEmpty;
             });
+
+
           }
         },
         style: ElevatedButton.styleFrom(
