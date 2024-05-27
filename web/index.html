@@ -1,21 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
-
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="A new Flutter project.">
@@ -38,8 +24,30 @@
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
+
+  <!-- Add this script to load the Google Identity Services library -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script>
+    // Initialize the Google Identity Services
+    function initGoogleSignIn() {
+      google.accounts.id.initialize({
+        client_id: 'YOUR_CLIENT_ID.apps.googleusercontent.com', // Replace with your actual client ID
+        callback: handleCredentialResponse
+      });
+      google.accounts.id.renderButton(
+        document.getElementById('signInButton'),
+        { theme: 'outline', size: 'large' }  // Customization attributes
+      );
+    }
+
+    function handleCredentialResponse(response) {
+      console.log('Encoded JWT ID token: ' + response.credential);
+      // Here you can handle the response, e.g., send it to your server
+    }
+  </script>
 </head>
-<body>
+<body onload="initGoogleSignIn()">
+  <div id="signInButton"></div>
   <script>
     window.addEventListener('load', function(ev) {
       // Download main.dart.js
