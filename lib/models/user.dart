@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 class AppUser {
-  final String email;
   final String uid;
+  final String email;
   final String username;
   final String name;
   final String contactNumber;
@@ -10,26 +10,17 @@ class AppUser {
   final int accountType;
   final bool status;
 
-  final bool isOpen;
-  final String desc;
-  final List<String> proofOfLegitimacy;
 
 
   AppUser({
-    required this.email,
     required this.uid,
+    required this.email,
     required this.username,
     required this.name,
     required this.contactNumber,
     required this.addresses,
     required this.accountType,
     required this.status,
-
-    // additional fields for organizations
-    this.isOpen = false,
-    this.desc = '',
-    this.proofOfLegitimacy = const [],
-
   });
 
    AppUser copyWith({
@@ -41,9 +32,7 @@ class AppUser {
     List<String>? addresses,
     int? accountType,
     bool? status,
-    bool? isOpen,
-    String? desc,
-    List<String>? proofOfLegitimacy,
+ 
 
   }) {
     return AppUser(
@@ -55,25 +44,21 @@ class AppUser {
       addresses: addresses ?? this.addresses,
       accountType: accountType ?? this.accountType,
       status: status ?? this.status,
-      isOpen: isOpen ?? this.isOpen,
-      desc: desc ?? this.desc,
-      proofOfLegitimacy: proofOfLegitimacy ?? this.proofOfLegitimacy,
+ 
     );
   }
 
   factory AppUser.fromJson(Map<String, dynamic> json) {
   return AppUser(
-    uid: json['uid'] ?? '',
-    email: json['email'] ?? '',
-    username: json['username'] ?? '',
-    name: json['name'] ?? '',
-    contactNumber: json['contactNumber'] ?? '',
-    addresses: List<String>.from(json['addresses'] ?? []),
-    accountType: json['accountType'] ?? 0,
+    uid: json['uid'],
+    email: json['email'],
+    username: json['username'],
+    name: json['name'],
+    contactNumber: json['contactNumber'],
+    addresses: List<String>.from(json['addresses']),
+    accountType: json['accountType'],
     status: json['status'] ?? false,
-    isOpen: json['isOpen'] ?? false,
-    desc: json['desc'] ?? '',
-    proofOfLegitimacy: List<String>.from(json['proofOfLegitimacy'] ?? []),
+
   );
 }
 
@@ -92,9 +77,7 @@ class AppUser {
       'addresses': addresses,
       'accountType': accountType,
       'status': status,
-      'isOpen': isOpen,
-      'desc': desc,
-      'proofOfLegitimacy':proofOfLegitimacy,
+ 
     };
   }
 }
