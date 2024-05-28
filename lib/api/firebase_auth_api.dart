@@ -55,6 +55,7 @@ class FirebaseAuthAPI {
         'email': email,
         'addresses': addresses, // Store user's addresses as a list
         'contactNumber': contactNumber,
+        'role': 'donor',
     });
 
 //let's print the object returned by signInWithEmailAndPassword
@@ -97,6 +98,7 @@ Future<void> orgSignUp(
       'email': email,
       'contactNumber': contactNumber,
       'proofOfLegitimacy': proofOfLegitimacy,
+      'role': 'organization',
     });
 
     // Print the user credential object for debugging or tracking purposes

@@ -48,12 +48,12 @@ Future<void> orgSignUp(
   String proofOfLegitimacy,
 ) async {
   await authService.orgSignUp(
-organizationName,
-   description,
-   contactInformation,
-   email,
-   password,
-   proofOfLegitimacy,
+  organizationName,
+  description,
+  contactInformation,
+  email,
+  password,
+  proofOfLegitimacy,
   );
   notifyListeners();
 }

@@ -21,12 +21,7 @@ class _OrganizationSignUpPageState extends State<OrganizationSignUpPage> {
   String? password;
   String? proofOfLegitimacy; // This can be a file upload field
 
-  // RegExp for email validation
-  bool isValidEmail(String email) {
-    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
-  }
 
- 
 
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -192,8 +187,7 @@ class _OrganizationSignUpPageState extends State<OrganizationSignUpPage> {
           validator: (value) {
             if (value == null || value.isEmpty) {
               return "Please enter your email";
-            } else if (!isValidEmail(value)) {
-              return "Please enter a valid email format";
+            
             }
             return null;
           },
