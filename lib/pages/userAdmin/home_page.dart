@@ -1,15 +1,11 @@
-/*
-  Created by: Claizel Coubeili Cepe
-  Date: updated April 26, 2023
-  Description: Sample todo app with Firebase 
-*/
 
+import 'package:elgivesv2/models/user.dart';
 import 'package:elgivesv2/pages/orgsPage.dart';
+import 'package:elgivesv2/providers/auth_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
-import 'signin_page.dart';
+import './signin_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,32 +15,38 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  AppUser? user;
+
   @override
   Widget build(BuildContext context) {
     Stream<User?> userStream = context.watch<UserAuthProvider>().userStream;
+    user = context.watch<UserAuthProvider>().accountInfo;
 
-    return StreamBuilder(
-        stream: userStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Scaffold(
-              body: Center(
-                child: Text("Error encountered! ${snapshot.error}"),
-              ),
-            );
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          } else if (!snapshot.hasData) {
-            return const SignInPage();
+    return StreamBuilder<User?>(
+      stream: userStream,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(child: Text(snapshot.error!.toString()));
+        } else if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (!snapshot.hasData || user == null) {
+          return const SignInPage();
+        } else {
+          
+        
+     if (user!.accountType == 0){
+            return  OrgsPage();
+          } else if (user!.accountType == 2){
+            return  OrgsPage();
+          } else {
+            return  OrgsPage();
           }
 
-          // if user is logged in, display the scaffold containing the streambuilder for the todos
-          return OrgsPage();
-
-        });
+          }
+        }
+      
+    );
   }
 }
+
+
