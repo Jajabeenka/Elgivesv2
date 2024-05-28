@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:elgivesv2/models/donor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -11,6 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import '../provider/add_image.dart';
 import '../provider/donation_provider.dart';
+import '../providers/auth_provider.dart';
 import '../slambook_widgets/time.dart';
 import '../slambook_widgets/utils.dart';
 import '../slambook_widgets/weight.dart';
@@ -177,6 +179,13 @@ Future<String> saveProfile() async{
   return resp;
 }
 
+String? getUserId() {
+  String userId = context.watch<UserAuthProvider>().user!.uid;
+  if (userId != null) {
+    return userId;
+  }
+  return null;
+}
   @override
   Widget build(BuildContext context) {
     DateTime initialDateTime = DateTime.now();
@@ -458,7 +467,7 @@ Future<String> saveProfile() async{
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  onPressed: (dateTime.isBefore(DateTime.now())) 
+                  onPressed: (dateTime.isBefore(DateTime.now()) || categories.isEmpty) 
                       ? null
                       : () async {
                           if (_formKey.currentState!.validate()) {
@@ -474,6 +483,7 @@ Future<String> saveProfile() async{
                               addresses: addresses,
                               contactNumber: contact,
                               status: "Pending",
+                              userId: "ndowdbnowdb",
                             );
                             setState(() {
                               showText = true;
@@ -513,9 +523,9 @@ Future<String> saveProfile() async{
             borderRadius: BorderRadius.circular(8),
           ),
         ),
-        onPressed: (dateTime.isBefore(DateTime.now())) ? null :() =>  () {
+        onPressed: (dateTime.isBefore(DateTime.now())) ? null : () {
           setState(() {
-            data = "Status: Pending\nDate Created: ${dateTime.toString()}";
+            data = "Status: Pending \nDate Created: ${dateTime.toString()}";
           });
           showDialog(
             context: context,

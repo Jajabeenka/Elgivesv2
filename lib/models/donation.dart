@@ -9,6 +9,7 @@ class Donation {
   final String addresses;
   final String contactNumber;
   final String status;
+  final String? userId;
 
   Donation({
     required this.categories,
@@ -18,20 +19,22 @@ class Donation {
     required this.dateTime,
     required this.addresses,
     required this.contactNumber,
-    required this.status
+    required this.status,
+    required this.userId,
   });
 
   // Factory constructor to instantiate object from json format
   factory Donation.fromJson(Map<String, dynamic> json) {
     return Donation(
-      categories: json['categories'],
-      pickupOrDropOff: json['id'],
-      weight: json['weight'],
+      categories: List<String>.from(json['categories'] ?? []),
+      pickupOrDropOff: json['pickupOrDropOff'] ?? '',
+      weight: json['weight'] ?? '',
       photo: json['photo'],
-      dateTime: DateTime.parse(json['dateTime']),
-      addresses: json['addresses'],
-      contactNumber: json['contactNumber'], 
-      status: json['status']
+      dateTime: DateTime.parse(json['dateTime'] ?? DateTime.now().toString()),
+      addresses: json['addresses'] ?? '',
+      contactNumber: json['contactNumber'] ?? '',
+      status: json['status'] ?? '',
+      userId: json['userId'],
     );
   }
 
@@ -50,6 +53,7 @@ class Donation {
       'addresses': donation.addresses,
       'contactNumber': donation.contactNumber,
       'status': donation.status,
+      'userId': donation.userId,
     };
   }
 

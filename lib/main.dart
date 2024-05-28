@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'EWAN Q PA',
-      initialRoute: '/organizations',
+      initialRoute: '/',
       routes: { 
         '/': (context) => const SplashScreen(),
         '/organizations': (context) => OrgsPage(),
