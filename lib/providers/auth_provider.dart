@@ -1,70 +1,101 @@
+import 'dart:async';
+import 'package:elgivesv2/api/firebase_auth_api.dart';
+import 'package:elgivesv2/api/firebase_user_api.dart';
+import 'package:elgivesv2/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../api/firebase_auth_api.dart';
+
+import '../models/user.dart';
 
 class UserAuthProvider with ChangeNotifier {
   late FirebaseAuthAPI authService;
-  late Stream<User?> _uStream;
+  late Stream<User?> _authStream;
+  bool? _userApprovalStatus;
+  AppUser? _accountInfo;
+  Stream<List<AppUser>>? _dbStream;
+  bool unique = false;
 
   UserAuthProvider() {
     authService = FirebaseAuthAPI();
-    fetchAuthentication();
+    _initializeStreams();
   }
 
-  Stream<User?> get userStream => _uStream;
+  void refresh() {
+    _getAccountInfo();
+    getApprovalStatus();
+  }
+
+  Stream<User?> get userStream => _authStream;
   User? get user => authService.getUser();
+  bool? get userApprovalStatus => _userApprovalStatus;
+  AppUser? get accountInfo => _accountInfo;
 
-  void fetchAuthentication() {
-    _uStream = authService.userSignedIn();
+  void _initializeStreams() {
+    _authStream = authService.userSignedIn();
+    notifyListeners();
+
+    _authStream = authService.userSignedIn();
+    _authStream.listen((user) {
+      refresh();
+    });
+
+    _dbStream = FirebaseUserAPI().fetchUsers();
+    _dbStream!.listen((users) {
+      refresh();
+    });
+  }
+
+  String? _email;
+  String? get email => _email;
+
+  Future<void> fetchEmail(username) async {
+    _email = await authService.fetchEmail(username);
     notifyListeners();
   }
 
-// modified
-Future<void> signUp(
-  String name,
-  String username,
-  String email,
-  String password,
-  List<String> addresses,
-  String contactNumber,
-) async {
-  await authService.signUp(
-    name,
-    username,
-    email,
-    password,
-    addresses,
-    contactNumber,
-  );
-  notifyListeners();
-}
-
-Future<void> orgSignUp(
-  String organizationName,
-  String description,
-  String contactInformation,
-  String email,
-  String password,
-  String proofOfLegitimacy,
-) async {
-  await authService.orgSignUp(
-organizationName,
-   description,
-   contactInformation,
-   email,
-   password,
-   proofOfLegitimacy,
-  );
-  notifyListeners();
-}
-
-  Future<void> signIn(String email, String password) async {
-    await authService.signIn(email, password);
+  Future<void> _getAccountInfo() async {
+    if (user == null) {
+      return;
+    }
+    _accountInfo = await UserProvider().getAccountInfo(user!.uid);
     notifyListeners();
+  }
+
+  Future<void> getApprovalStatus() async {
+    _userApprovalStatus = await authService.getUserApprovalStatus();
+    notifyListeners();
+  }
+
+  Future<String?> signUp(
+      String email,
+      String password,
+      String username,
+      String name,
+      String contactNo,
+      List<String> address,
+      int accountType,
+      bool status) async {
+    String? uid = await authService.signUp(email, password, username, name,
+        contactNo, address, accountType, status);
+    notifyListeners();
+    return uid;
+  }
+
+  Future<String?> signIn(String email, String password) async {
+    String? message = await authService.signIn(email, password);
+    notifyListeners();
+    return message;
+  }
+
+  Future<bool> isUsernameUnique(String username) async {
+    unique = await authService.isUsernameUnique(username);
+    notifyListeners();
+    return unique;
   }
 
   Future<void> signOut() async {
     await authService.signOut();
+    _accountInfo = null;
     notifyListeners();
   }
 }

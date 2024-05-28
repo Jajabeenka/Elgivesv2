@@ -1,128 +1,145 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:elgivesv2/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-// ito yung class
 class FirebaseAuthAPI {
-  // instantiate a new instance
   static final FirebaseAuth auth = FirebaseAuth.instance;
+  static final FirebaseFirestore db = FirebaseFirestore.instance;
 
-// lahat ng details ng LOGGED IN user andito na
   User? getUser() {
     return auth.currentUser;
   }
 
-// chinecheck kung may naka sign in o wala
   Stream<User?> userSignedIn() {
     return auth.authStateChanges();
   }
 
-  Future<String?> signIn(String email, String password) async {
-    // UserCredential credential;
-    try {
-       await auth.signInWithEmailAndPassword(
-          email: email, password: password);
-          return "";
-//let's print the object returned by signInWithEmailAndPassword
-//you can use this object to get the user's id, email, etc.
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-//possible to return something more useful
-//than just print an error message to improve UI/UX
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
-      }
+  Future<bool?> getUserApprovalStatus() async {
+    User? user = getUser();
+    if (user == null) {
+      return null;
     }
-  }
 
-  Future<void> signUp(  String name,
-  String username,
-  String email,
-  String password,
-  List<String> addresses,
-  String contactNumber,) async {
-    UserCredential credential;
     try {
-      // papasa lang paggawa method
-      credential = await auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password, 
-      );
-      // add fname and lname
-    await FirebaseFirestore.instance.collection('donors').doc(credential.user!.uid).set({
-      'name': name, // Store user's full name
-        'username': username,
-        'email': email,
-        'addresses': addresses, // Store user's addresses as a list
-        'contactNumber': contactNumber,
-    });
-
-//let's print the object returned by signInWithEmailAndPassword
-//you can use this object to get the user's id, email, etc.\
-      print(credential);
-    } on FirebaseAuthException catch (e) {
-//possible to return something more useful
-//than just print an error message to improve UI/UX
-      if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
-      } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
-      }else if (e.code == 'invalid-email') {
-        print('Invalid email address');
+      DocumentSnapshot doc = await db.collection('users').doc(user.uid).get();
+      if (doc.exists) {
+        return doc['status'];
+      } else {
+        return null;
       }
     } catch (e) {
-      print(e);
+      print("Error getting approval status: $e");
+      return null;
     }
   }
 
-Future<void> orgSignUp(
-  String organizationName,
-  String description,
-  String email,
-  String password,
-  String contactNumber,
-  String proofOfLegitimacy,
-) async {
+  Future<String?> signIn(String email, String password) async {
+    try {
+      await auth.signInWithEmailAndPassword(email: email, password: password);
+      return "Successful!";
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'invalid-email') {
+        return e.message;
+      } else if (e.code == 'invalid-credential') {
+        return e.message;
+      } else if (e.code == 'wrong-password') {
+        return e.message;
+      } else if (e.code == 'user-not-found') {
+        return e.message;
+      } else {
+        return "Failed at ${e.code}: ${e.message}";
+      }
+    }
+  }
+
+  Future<String?> signUp(
+      String email,
+      String password,
+      String username,
+      String name,
+      String contactNumber,
+      List<String> addresses,
+      int accountType,
+      bool status) async {
+    try {
+      UserCredential credential = await auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      if (credential.user != null) {
+        AppUser newUser = AppUser(
+          uid: credential.user!.uid,
+          email: email,
+          username: username,
+          name: name,
+          contactNumber: contactNumber,
+          addresses: addresses,
+          accountType: accountType,
+          status: status,
+        );
+
+        try {
+          Map<String, dynamic> userData = newUser.toJson(newUser);
+          await db.collection("users").doc(credential.user!.uid).set(userData);
+          return credential.user!.uid;
+        } on FirebaseException catch (e) {
+          return "Error in Firestore: ${e.code}: ${e.message}";
+        }
+      } else {
+        return "User authentication failed.";
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        return 'Account already exists.';
+      } else if (e.code == 'weak-password') {
+        return 'Weak password';
+      }
+    } catch (e) {
+      return " $e";
+    }
+
+    return "ERROR";
+  }
+
+   Future<String?> fetchEmail(String username) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance.collection('users').where("username", isEqualTo: username).get();
+
+      if (snapshot.docs.isNotEmpty) {
+        return snapshot.docs.first.get('email') as String?;
+      } else {
+        return null; 
+      }
+    } catch (e) {
+      print("Error fetching email: $e");
+      return null;
+    }
+  }
+
+  Future<bool> isUsernameUnique(String username) async {
   try {
-    // Create user with email and password
-    UserCredential credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    QuerySnapshot querySnapshot = await db
+        .collection('users')
+        .where('username', isEqualTo: username)
+        .get();
 
-    // Store user information in Firestore under 'organizations' collection
-    await FirebaseFirestore.instance.collection('organizations').doc(credential.user!.uid).set({
-      'organizationName': organizationName,
-      'description': description,
-      'email': email,
-      'contactNumber': contactNumber,
-      'proofOfLegitimacy': proofOfLegitimacy,
-    });
+    // Logging the size of the query result
+    print('Query size: ${querySnapshot.size}');
 
-    // Print the user credential object for debugging or tracking purposes
-    print(credential);
-  } on FirebaseAuthException catch (e) {
-    // Handle specific FirebaseAuth errors
-    if (e.code == 'weak-password') {
-      print('The password provided is too weak.');
-    } else if (e.code == 'email-already-in-use') {
-      print('The account already exists for that email.');
-    } else if (e.code == 'invalid-email') {
-      print('Invalid email address');
-    } else {
-      print('FirebaseAuthException occurred: $e');
+    if (querySnapshot.size == 0) {
+      return true;
     }
+    return false;
   } catch (e) {
-    // Handle other exceptions
-    print('Error occurred during organization sign-up: $e');
+    // Logging the error
+    print(' $e');
+    return false;
   }
 }
 
-Future<void> signOut() async {
-  await auth.signOut();
-}
-}
+  Future<void> signOut() async {
+    await auth.signOut();
+  }
 
-
-// kung magkaiba ang iaaccess 
-// authentication only
+}

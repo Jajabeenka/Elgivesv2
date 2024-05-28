@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
+
 
 class DrawerWidget extends StatefulWidget {
   final String? text;
@@ -77,34 +80,15 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               Navigator.pushNamed(context, "/donorProfile");
             },
           ),
-          Divider(
-            height: 1,
-            thickness: 1,
-            color: dividerColor,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Text(
-              "Settings",
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          ListTile(
-            leading: Icon(Icons.nightlight, color: iconColor),
-            title: Text(
-              "Dark Mode",
-              style: TextStyle(color: foregroundColor),
-            ),
-            trailing: Switch(
-              value: _isDarkMode,
-              onChanged: _toggleDarkMode,
-            ),
-          ),
+             ListTile(
+          title: const Text('Logout'),
+          onTap: () {
+            context.read<UserAuthProvider>().signOut();
+            Navigator.pop(context);
+          },
+        ),
         ],
       ),
-    ));
+    );
   }
 }
