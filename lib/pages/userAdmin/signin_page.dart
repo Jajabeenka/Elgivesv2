@@ -29,7 +29,7 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 141, 20, 54),
+      backgroundColor: Color(0xFF8D1436),
       body: SingleChildScrollView(
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 80, horizontal: 30),
@@ -65,8 +65,6 @@ class _SignInPageState extends State<SignInPage> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
-                if (showSignInErrorMessage) signInErrorMessage,
                 const SizedBox(height: 20),
                 submitButton,
                 const SizedBox(height: 20),
@@ -154,21 +152,10 @@ class _SignInPageState extends State<SignInPage> {
         },
       );
 
-  Widget get signInErrorMessage => Padding(
-        padding: const EdgeInsets.only(bottom: 30),
-        child: Text(
-          "Invalid email or password",
-          style: TextStyle(color: Colors.black),
-        ),
-      );
 
   Widget get submitButton => ElevatedButton(
-
-
-
         onPressed: () async {
 
-        // AppUser? user = await FirebaseAuthAPI().signIn(email, password);
 
           if (_formKey.currentState!.validate()) {
             _formKey.currentState!.save();

@@ -79,27 +79,30 @@ class FirebaseAuthAPI {
           status: status,
         );
 
+        // Save user information to Firestore
         try {
           Map<String, dynamic> userData = newUser.toJson(newUser);
           await db.collection("users").doc(credential.user!.uid).set(userData);
           return credential.user!.uid;
+          // Now the user is successfully added to Firestore
         } on FirebaseException catch (e) {
           return "Error in Firestore: ${e.code}: ${e.message}";
+          // Handle Firestore error
         }
       } else {
-        return "User authentication failed.";
+        return "Error: User authentication failed.";
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
-        return 'Account already exists.';
+        return 'Error: The account already exists for that email.';
       } else if (e.code == 'weak-password') {
-        return 'Weak password';
+        return 'Error: Weak password';
       }
     } catch (e) {
-      return " $e";
+      return "Error: $e";
     }
 
-    return "ERROR";
+    return "Error";
   }
 
    Future<String?> fetchEmail(String username) async {
@@ -109,7 +112,7 @@ class FirebaseAuthAPI {
       if (snapshot.docs.isNotEmpty) {
         return snapshot.docs.first.get('email') as String?;
       } else {
-        return null; 
+        return null; // User not found
       }
     } catch (e) {
       print("Error fetching email: $e");
@@ -133,7 +136,7 @@ class FirebaseAuthAPI {
     return false;
   } catch (e) {
     // Logging the error
-    print(' $e');
+    print('Error in isUsernameUnique: $e');
     return false;
   }
 }

@@ -1,11 +1,13 @@
 import 'dart:async';
+
+
 import 'package:elgivesv2/api/firebase_auth_api.dart';
 import 'package:elgivesv2/api/firebase_user_api.dart';
+import 'package:elgivesv2/models/user.dart';
 import 'package:elgivesv2/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../models/user.dart';
 
 class UserAuthProvider with ChangeNotifier {
   late FirebaseAuthAPI authService;
@@ -74,9 +76,9 @@ class UserAuthProvider with ChangeNotifier {
       String contactNo,
       List<String> address,
       int accountType,
-      bool status) async {
+      bool isApproved) async {
     String? uid = await authService.signUp(email, password, username, name,
-        contactNo, address, accountType, status);
+        contactNo, address, accountType, isApproved);
     notifyListeners();
     return uid;
   }

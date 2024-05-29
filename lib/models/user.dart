@@ -23,7 +23,7 @@ class AppUser {
     required this.status,
   });
 
-   AppUser copyWith({
+   AppUser duplicate({
     String? email,
     String? uid,
     String? username,
@@ -81,4 +81,3 @@ class AppUser {
     };
   }
 }
-

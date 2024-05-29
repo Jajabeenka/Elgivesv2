@@ -28,7 +28,11 @@ class _SignUpPageState extends State<SignUpPage> {
     List<String> addresses = ['']; // Initialize with a single address field
 
 
-  int accountType = 0; // 0 - Donor, 1 - Organization, 2 - Admin
+// 1 - Admin
+//2 - Donor
+// 3 - Organization
+
+  int accountType = 2; 
   bool multipleAddressesEnabled = false;
   bool _signUpPressed = false;
   bool errorSignup = false;
@@ -41,7 +45,7 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 141, 20, 54),
+      backgroundColor: Color(0xFF8D1436),
       appBar: AppBar(
         title: Text(
           "Sign Up Page",
@@ -105,7 +109,7 @@ Widget signInAs() {
                   width: constraints.maxWidth / 2,
                   top: 0,
                   bottom: 0,
-                  left: accountType == 0 ? 0 : constraints.maxWidth / 2,
+                  left: accountType == 2 ? 2 : constraints.maxWidth / 2,
                   child: Container(
                     decoration: BoxDecoration(
                       color: Color(0xFF01563F),
@@ -123,7 +127,7 @@ Widget signInAs() {
                         behavior: HitTestBehavior.translucent,
                         onTap: () {
                           setState(() {
-                            accountType = 0;
+                            accountType = 2;
                           });
                         },
                         child: Padding(
@@ -131,7 +135,7 @@ Widget signInAs() {
                           child: Center(
                             child: Text("Donor",
                                 style: TextStyle(
-                                    color: accountType == 0
+                                    color: accountType == 2
                                         ? Colors.white
                                         : Color(0xFF01563F))),
                           ),
@@ -144,7 +148,7 @@ Widget signInAs() {
                         behavior: HitTestBehavior.translucent,
                         onTap: () {
                           setState(() {
-                            accountType = 1;
+                            accountType = 3;
                           });
                         },
                         child: Padding(
@@ -152,7 +156,7 @@ Widget signInAs() {
                           child: Center(
                             child: Text("Organization",
                                 style: TextStyle(
-                                    color: accountType == 1
+                                    color: accountType == 3
                                         ? Colors.white
                                         : Color(0xFF01563F))),
                           ),
@@ -196,7 +200,7 @@ Widget signInAs() {
           const SizedBox(height: 10),
           addAnotherAddressButton(),
            const SizedBox(height: 15),
-            accountType == 1 ? proofOfLegitimacy() : Container(),
+            accountType == 3 ? proofOfLegitimacy() : Container(),
         ],
       ),
     );
@@ -611,7 +615,7 @@ Widget proofOfLegitimacy() {
       );
 
       if (uid != null && !uid.contains("Error")) {
-        if (accountType == 1 && files.isNotEmpty) {
+        if (accountType == 3 && files.isNotEmpty) {
   
           AppUser userDetails = AppUser(
             email: email!,

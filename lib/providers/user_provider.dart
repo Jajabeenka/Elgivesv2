@@ -1,32 +1,51 @@
 import 'dart:async';
-
+import 'package:elgivesv2/models/user.dart';
 import 'package:flutter/material.dart';
 import '../api/firebase_user_api.dart';
-import '../models/user.dart';
 
+/// A provider class that manages user data and interaction with Firebase.
 class UserProvider with ChangeNotifier {
-  late FirebaseUserAPI firebaseService;
+  /// Firebase service instance for fetching and updating user data.
+  late FirebaseUserAPI fbService;
 
+  /// Stream of users from the database.
   Stream<List<AppUser>>? _dbStream;
-  late Stream<List<AppUser>> _orgStream = const Stream.empty();
-  late Stream<List<AppUser>> _pendingOrgStream = const Stream.empty();
-  late Stream<List<AppUser>> _donorStream = const Stream.empty();
 
-  Stream<List<AppUser>> get orgStream => _orgStream;
-  Stream<List<AppUser>> get pendingOrgStream => _pendingOrgStream;
+  /// Stream of donor users.
+  late Stream<List<AppUser>> _donorStream = Stream.empty();
+
+  /// Stream of approved organization users.
+  late Stream<List<AppUser>> _orgStream = Stream.empty();
+
+  /// Stream of pending organization users.
+  late Stream<List<AppUser>> _pendingOrgStream = Stream.empty();
+
+  /// Getter for the stream of donor users.
   Stream<List<AppUser>> get donorStream => _donorStream;
 
-  final int donorAcc = 0, orgAcc = 1, adminAcc = 2;
-  
+  /// Getter for the stream of approved organization users.
+  Stream<List<AppUser>> get orgStream => _orgStream;
+
+  /// Getter for the stream of pending organization users.
+  Stream<List<AppUser>> get pendingOrgStream => _pendingOrgStream;
+
+  /// Account type identifiers.
+  final int adminAccount = 1, donorAccount = 2, organizationAccount = 3;
+
+  /// Currently selected user.
   AppUser? _selectedUser;
+
+  /// Getter for the currently selected user.
   AppUser? get selectedUser => _selectedUser;
+
+  /// Flag to indicate if the username is unique.
   bool unique = false;
 
-  UserProvider(){
-    firebaseService = FirebaseUserAPI();
-
-    _dbStream = FirebaseUserAPI().fetchUsers();
-    _dbStream!.listen((users) {
+  /// Constructor initializes the Firebase service and starts listening to the user stream.
+  UserProvider() {
+    fbService = FirebaseUserAPI();
+    _dbStream = fbService.fetchUsers();
+    _dbStream?.listen((users) {
       refresh();
     });
 
@@ -35,27 +54,32 @@ class UserProvider with ChangeNotifier {
     fetchPendingOrganizations();
   }
 
-  void refresh(){
+  /// Refreshes the data of the selected user.
+  void refresh() {
     if (_selectedUser != null) getAccountInfo(_selectedUser!.uid);
   }
 
+  /// Fetches users by account type and approval status, and sorts them by name.
   void _fetchUsersByType(int accountType, bool approvalStatus) {
     try {
-      var newStream = firebaseService.fetchUsersByAccountType(accountType, approvalStatus);
-      
-        var sortedStream = newStream.map((snapshot) {
-          var docs = snapshot;
-          docs.sort((a, b) => a.name.compareTo(b.name));
-          return snapshot;
-        });
-      
-      switch(accountType){
-        case 0: 
-          _donorStream = sortedStream; 
+      var newStream = fbService.fetchUsersByAccountType(accountType, approvalStatus);
+
+      var sortedStream = newStream.map((snapshot) {
+        var docs = List<AppUser>.from(snapshot);
+        docs.sort((a, b) => a.name.compareTo(b.name));
+        return docs;
+      });
+
+      switch (accountType) {
+        case 2:
+          _donorStream = sortedStream;
           break;
-        case 1:
-          if (approvalStatus){_orgStream = sortedStream;}
-          else {_pendingOrgStream = sortedStream;}
+        case 3:
+          if (approvalStatus) {
+            _orgStream = sortedStream;
+          } else {
+            _pendingOrgStream = sortedStream;
+          }
           break;
         default:
           break;
@@ -68,42 +92,49 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  /// Fetches donors from the database.
   void fetchDonors() {
-    _fetchUsersByType(donorAcc,false);
+    _fetchUsersByType(donorAccount, false);
   }
 
+  /// Fetches approved organizations from the database.
   void fetchOrganizations() {
-    _fetchUsersByType(orgAcc,true);
+    _fetchUsersByType(organizationAccount, true);
   }
 
+  /// Fetches pending organizations from the database.
   void fetchPendingOrganizations() {
-    _fetchUsersByType(orgAcc,false);
+    _fetchUsersByType(organizationAccount, false);
   }
 
+  /// Fetches admins from the database.
   void fetchAdmins() {
-    _fetchUsersByType(adminAcc,false);
+    _fetchUsersByType(adminAccount, false);
   }
 
+  /// Retrieves account information for a user by their ID.
   Future<AppUser?> getAccountInfo(String? id) async {
-    if (id == null){
+    if (id == null) {
       _selectedUser = null;
       notifyListeners();
       return _selectedUser;
     }
 
-    _selectedUser = await firebaseService.getAccountInfo(id);
+    _selectedUser = await fbService.getAccountInfo(id);
     notifyListeners();
     return _selectedUser;
   }
 
-  Future<bool> isUsernameUnique(String username) async {
-    unique = await firebaseService.isUsernameUnique(username);
+  /// Checks if a username is unique.
+  Future<bool> usernameChecker(String username) async {
+    unique = await fbService.usernameChecker(username);
     notifyListeners();
     return unique;
   }
 
+  /// Updates user details in the database.
   Future<String?> updateUser(String id, AppUser details) async {
-    String? message = await firebaseService.updateUser(id, details.toJson(details));
+    String? message = await fbService.updateUser(id, details.toJson(details));
     notifyListeners();
     return message;
   }

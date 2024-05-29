@@ -61,7 +61,7 @@ class FirebaseUserAPI {
     }
   }
 
- Future<bool> isUsernameUnique(String username) async {
+ Future<bool> usernameChecker(String username) async {
   try {
     QuerySnapshot querySnapshot = await db
         .collection('users')
@@ -77,7 +77,7 @@ class FirebaseUserAPI {
     return false;
   } catch (e) {
     // Logging the error
-    print('Error in isUsernameUnique: $e');
+    print('$e');
     return false;
   }
 }

@@ -1,6 +1,7 @@
 
 import 'package:elgivesv2/models/user.dart';
 import 'package:elgivesv2/pages/orgsPage.dart';
+import 'package:elgivesv2/pages/userAdmin/admin/adminApprovalPage.dart';
 import 'package:elgivesv2/providers/auth_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -34,12 +35,12 @@ class _HomePageState extends State<HomePage> {
         } else {
           
         
-     if (user!.accountType == 0){
-            return  OrgsPage();
-          } else if (user!.accountType == 2){
+     if (user!.accountType == 1){
+            return  const adminApproval();
+          } else if (user!.accountType == 3){
             return  OrgsPage();
           } else {
-            return  OrgsPage();
+            return const adminApproval();
           }
 
           }
