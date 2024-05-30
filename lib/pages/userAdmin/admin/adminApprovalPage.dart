@@ -1,6 +1,8 @@
 import 'package:elgivesv2/models/user.dart';
+import 'package:elgivesv2/pages/userAdmin/admin/adminDrawer.dart';
 import 'package:elgivesv2/pages/userAdmin/admin/organizationDetailsPage.dart';
 import 'package:elgivesv2/providers/user_provider.dart';
+import 'package:elgivesv2/slambook_widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -24,6 +26,7 @@ class _PendingOrganizationHomeState extends State<adminApproval> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF8D1436),
+      drawer: AdminDrawerWidget(),
       appBar: AppBar(
         title: const Text(
           "Pending Organizations",
@@ -45,10 +48,14 @@ class _PendingOrganizationHomeState extends State<adminApproval> {
               } else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(child: Text('No pending organizations found',style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Color(0xFFFFC107),
-          ),));
+                return const Center(
+                    child: Text(
+                  'No pending organizations found',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFFFFC107),
+                  ),
+                ));
               } else {
                 final pendingOrgs = snapshot.data!;
                 return Padding(
@@ -71,9 +78,9 @@ class _PendingOrganizationHomeState extends State<adminApproval> {
 
   Widget componentTiles(AppUser user) {
     return Card(
-    
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         leading: CircleAvatar(
           radius: 30,
           backgroundColor: Colors.grey[200],
@@ -99,7 +106,8 @@ class _PendingOrganizationHomeState extends State<adminApproval> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => OrganizationDetailPage(orgId: user.uid, pending: true),
+              builder: (context) =>
+                  OrganizationDetailPage(orgId: user.uid, pending: true),
             ),
           );
         },
@@ -112,7 +120,8 @@ class OrganizationDetailPage extends StatefulWidget {
   final String orgId;
   final bool pending;
 
-  const OrganizationDetailPage({super.key, required this.orgId, required this.pending});
+  const OrganizationDetailPage(
+      {super.key, required this.orgId, required this.pending});
 
   @override
   State<OrganizationDetailPage> createState() => _OrganizationDetailPageState();
@@ -169,59 +178,57 @@ class _OrganizationDetailPageState extends State<OrganizationDetailPage> {
     );
   }
 
- 
   bool approveButtonisPressed = false;
- Widget approveButton() {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 12.0),
-    child: GestureDetector(
-      child: ElevatedButton(
-        onPressed: () async {
-          setState(() {
-            approveButtonisPressed = true;
-          });
+  Widget approveButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: GestureDetector(
+        child: ElevatedButton(
+          onPressed: () async {
+            setState(() {
+              approveButtonisPressed = true;
+            });
 
-          AppUser? details = context.read<UserProvider>().selectedUser;
-          AppUser duplicate = details!.duplicate(status: true);
+            AppUser? details = context.read<UserProvider>().selectedUser;
+            AppUser duplicate = details!.duplicate(status: true);
 
-          var message = await context.read<UserProvider>().updateUser(widget.orgId, duplicate);
-          print(message);
+            var message = await context
+                .read<UserProvider>()
+                .updateUser(widget.orgId, duplicate);
+            print(message);
 
-          if (mounted) {
-            context.read<UserProvider>().getAccountInfo(null);
-            Navigator.of(context).pop();
-          }
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF01563F),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
+            if (mounted) {
+              context.read<UserProvider>().getAccountInfo(null);
+              Navigator.of(context).pop();
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF01563F),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 12.0),
           ),
-          padding: const EdgeInsets.symmetric(vertical: 12.0),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.login,
-              color: Colors.white,
-            ),
-            SizedBox(width: 10.0),
-            Text(
-              "Approve",
-              style: TextStyle(
-                color: const Color(0xFFFFC107),
-                fontWeight: FontWeight.bold,
-                fontSize: 16.0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.login,
+                color: Colors.white,
               ),
-            ),
-          ],
+              SizedBox(width: 10.0),
+              Text(
+                "Approve",
+                style: TextStyle(
+                  color: const Color(0xFFFFC107),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
-
-}
-
-

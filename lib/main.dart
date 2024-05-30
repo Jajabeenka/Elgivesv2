@@ -1,5 +1,6 @@
 
 import 'package:elgivesv2/pages/profilePage.dart';
+import 'package:elgivesv2/pages/userAdmin/admin/adminApprovalPage.dart';
 import 'package:elgivesv2/provider/donor_provider.dart';
 import 'package:elgivesv2/providers/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
         '/organizations': (context) => OrgsPage(),
         '/donatePage': (context) => FormSample(),
         '/donorProfile': (context) => ProfilePage(),
+        '/adminApproval': (context) =>  const adminApproval()
       },
       theme: ThemeData(
         primarySwatch: MaterialColor(0xFF00FF00, { // Green color for primary swatch
