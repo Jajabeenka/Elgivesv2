@@ -23,11 +23,6 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
-apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'kotlin-android'
-apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
-
 android {
     namespace "com.example.elgivesv2"
     compileSdk flutter.compileSdkVersion
@@ -68,6 +63,4 @@ flutter {
 
 dependencies {
     implementation 'androidx.multidex:multidex:2.0.1' // Add multidex dependency
-    implementation platform('com.google.firebase:firebase-bom:29.0.0')
-    implementation 'com.google.firebase:firebase-analytics'
 }

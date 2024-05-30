@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
-
 
 class DrawerWidget extends StatefulWidget {
   final String? text;
@@ -40,13 +37,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               Navigator.pushNamed(context, "/donorProfile");
             },
           ),
-             ListTile(
-          title: const Text('Logout'),
-          onTap: () {
-            context.read<UserAuthProvider>().signOut();
-            Navigator.pop(context);
-          },
-        ),
         ],
       ),
     );
