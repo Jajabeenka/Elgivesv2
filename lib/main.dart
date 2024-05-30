@@ -9,7 +9,8 @@ import '../provider/orgs_provider.dart';
 import '../models/donation.dart'; 
 import 'firebase_options.dart';
 import 'provider/donation_provider.dart';
-import 'pages/org_profile.dart';
+import 'pages/orgProfile.dart';
+import 'pages/donationDrive.dart';
 
 
 Future<void> main() async {
@@ -21,7 +22,7 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: ((context) => DonationProvider())),
+        // ChangeNotifierProvider(create: ((context) => DonationProvider())),
         ChangeNotifierProvider(create: ((context) => OrganizationProvider())),
         ChangeNotifierProvider(create: ((context) => DonorProvider())),
       ],
@@ -37,12 +38,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'EWAN Q PA',
-      initialRoute: '/organizations',
+      initialRoute: '/orgProfile',
       routes: { 
-        '/organizations': (context) => OrgsPage(),
-        '/donatePage': (context) => FormSample(),
+        // '/organizations': (context) => OrgsPage(),
+        // '/donatePage': (context) => FormSample(),
         '/donorProfile': (context) => ProfilePage(),
         '/orgProfile': (context) => OrgProfile(),
+        '/donationDrive': (context) => DonationDrive(),
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,

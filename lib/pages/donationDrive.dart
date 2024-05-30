@@ -1,15 +1,39 @@
+import 'package:elgivesv2/api/firebase_donationDrive_api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import '../models/drive.dart';
+import '../provider/donationDrive_provider.dart';
+import 'donationDriveModal.dart';
 
-class OrgProfile extends StatelessWidget {
+class DonationDrive extends StatefulWidget {
 
-  const OrgProfile({super.key});
+  const DonationDrive({super.key});
+
+  @override
+  State<DonationDrive> createState() => _DonationDriveState();
+}
+
+class _DonationDriveState extends State<DonationDrive> {
+  // final FirestoreService firestoreService = FirestoreService();
+  //text controller
+  final TextEditingController textController = TextEditingController();
+
+  //dialog box to add a donation drive
+  void addDrive() {
+    showDialog(
+      context: context, 
+      builder: (context) => DonationDriveModal(
+        type: 'Add',
+        item: null,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Organization Profile', 
+        title: const Text('Donation Drive', 
               style: TextStyle(color: Colors.white),
               ),
         backgroundColor: const Color.fromARGB(255, 8, 64, 60),
@@ -20,60 +44,6 @@ class OrgProfile extends StatelessWidget {
         ),
         child: Column(
           children: [ 
-            SingleChildScrollView(
-              child: Container(
-                margin: const EdgeInsets.all(6.0),
-                padding: const EdgeInsets.all(7.0),
-                width: MediaQuery.of(context).size.width,
-                height: 175.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.0),
-                  color: const Color.fromARGB(255, 255, 255, 255),
-                  border: Border.all(
-                    width: 5,
-                    color: const Color(0xFFFFC107),
-                  )
-                ),
-                child: const Column(
-                children: [
-                  //org logo and name
-                  Row(
-                    children: [
-                      Text('<logo>', style: TextStyle(color: Color(0xFF9F1010))),
-                      SizedBox(width: 20.0),
-                      Text('Elgives Charity', style: TextStyle(color: Color(0xFF9F1010), fontWeight: FontWeight.bold)),
-                      Spacer(),
-                        //edit button
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: SizedBox(
-                          width: 30.0,
-                          height: 30.0,
-                          child: FittedBox(
-                            child: FloatingActionButton(
-                              onPressed: null,
-                              child: Icon(Icons.edit),
-                            ),
-                          ),
-                        )
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 15.0),
-                  Row(
-                    children: [
-                      Text('About', style: TextStyle(color: Color(0xFF9F1010), fontSize: 25, fontWeight: FontWeight.bold)),
-                    ],
-                  ),                  
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', style: TextStyle(color: Color.fromARGB(255, 0, 0, 0))),
-                    ),
-                  ),
-                ],
-              ),
-              )
-            ),
             //list of charities
             Expanded (
               child: ListView(
@@ -93,8 +63,7 @@ class OrgProfile extends StatelessWidget {
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Charity Name", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                        Text("OPEN", style: TextStyle(color: Color.fromARGB(255, 8, 64, 60), fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text("Donation 1", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       ],),
                   ),
                   Container (
@@ -112,8 +81,7 @@ class OrgProfile extends StatelessWidget {
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Charity Name", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                        Text("OPEN", style: TextStyle(color: Color.fromARGB(255, 8, 64, 60), fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text("Donation 2", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       ],),
                   ),
                   Container (
@@ -131,8 +99,7 @@ class OrgProfile extends StatelessWidget {
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Charity Name", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                        Text("CLOSED", style: TextStyle(color: Color(0xFF9F1010), fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text("Donation 3", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       ],),
                   ),
                   Container (
@@ -150,8 +117,7 @@ class OrgProfile extends StatelessWidget {
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Charity Name", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                        Text("CLOSED", style: TextStyle(color: Color(0xFF9F1010), fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text("Donation 4", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       ],),
                   ),
                   Container (
@@ -169,8 +135,7 @@ class OrgProfile extends StatelessWidget {
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Charity Name", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                        Text("OPEN", style: TextStyle(color: Color.fromARGB(255, 8, 64, 60), fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text("Donation 5", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       ],),
                   ),
                   Container (
@@ -188,8 +153,7 @@ class OrgProfile extends StatelessWidget {
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Charity Name", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                        Text("CLOSED", style: TextStyle(color: Color(0xFF9F1010), fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text("Donation 6", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       ],),
                   ),
                   Container (
@@ -207,8 +171,7 @@ class OrgProfile extends StatelessWidget {
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Charity Name", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                        Text("CLOSED", style: TextStyle(color: Color(0xFF9F1010), fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text("Donation 7", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       ],),
                   ),
                   Container (
@@ -226,8 +189,7 @@ class OrgProfile extends StatelessWidget {
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Charity Name", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                        Text("CLOSED", style: TextStyle(color: Color(0xFF9F1010), fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text("Donation 8", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       ],),
                   ),
                   Container (
@@ -245,8 +207,7 @@ class OrgProfile extends StatelessWidget {
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Charity Name", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                        Text("OPEN", style: TextStyle(color: Color.fromARGB(255, 8, 64, 60), fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text("Donation 9", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       ],),
                   ),
                   Container (
@@ -264,8 +225,7 @@ class OrgProfile extends StatelessWidget {
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Charity Name", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                        Text("OPEN", style: TextStyle(color: Color.fromARGB(255, 8, 64, 60), fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text("Donation 10", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       ],),
                   ),
                   Container (
@@ -283,8 +243,7 @@ class OrgProfile extends StatelessWidget {
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Charity Name", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                        Text("OPEN", style: TextStyle(color: Color.fromARGB(255, 8, 64, 60), fontSize: 20, fontWeight: FontWeight.bold)),
+                        Text("Donation 11", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       ],),
                   ),
                 ],
@@ -292,7 +251,7 @@ class OrgProfile extends StatelessWidget {
             ),
             Container(
               margin: const EdgeInsets.all(6.0),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   SizedBox(
@@ -310,8 +269,8 @@ class OrgProfile extends StatelessWidget {
                     height: 30.0,
                     child: FittedBox(
                       child: FloatingActionButton(
-                        onPressed: null,
-                        child: Icon(Icons.arrow_forward),
+                        onPressed: addDrive,
+                        child: Icon(Icons.add),
                       ),
                     ),
                   ),
