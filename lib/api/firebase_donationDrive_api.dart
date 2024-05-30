@@ -10,9 +10,9 @@ class FirebaseTodoAPI {
   }
 
   //CREATE: add a donation drive
-  Future<String> addDrive(Map<String, dynamic> donation) async {
+  Future<String> addDrive(Map<String, dynamic> drive) async {
     try {
-      await db.collection("donations").add(donation);
+      await db.collection("drive").add(drive);
 
       return "Successfully added!";
     } on FirebaseException catch (e) {

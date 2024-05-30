@@ -1,4 +1,5 @@
 import 'package:elgivesv2/pages/profilePage.dart';
+import 'package:elgivesv2/provider/donationDrive_provider.dart';
 import 'package:elgivesv2/provider/donor_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +12,7 @@ import 'firebase_options.dart';
 import 'provider/donation_provider.dart';
 import 'pages/orgProfile.dart';
 import 'pages/donationDrive.dart';
+import 'provider/donationDrive_provider.dart';
 
 
 Future<void> main() async {
@@ -25,6 +27,7 @@ Future<void> main() async {
         // ChangeNotifierProvider(create: ((context) => DonationProvider())),
         ChangeNotifierProvider(create: ((context) => OrganizationProvider())),
         ChangeNotifierProvider(create: ((context) => DonorProvider())),
+        ChangeNotifierProvider(create: ((context) => DonationDriveProvider())),
       ],
       child: MyApp(),
     ),

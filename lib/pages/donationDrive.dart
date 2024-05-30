@@ -16,13 +16,13 @@ class DonationDrive extends StatefulWidget {
 class _DonationDriveState extends State<DonationDrive> {
   // final FirestoreService firestoreService = FirestoreService();
   //text controller
-  final TextEditingController textController = TextEditingController();
+  // final TextEditingController textController = TextEditingController();
 
   //dialog box to add a donation drive
   void addDrive() {
     showDialog(
       context: context, 
-      builder: (context) => DonationDriveModal(
+      builder: (BuildContext context) => DonationDriveModal(
         type: 'Add',
         item: null,
       ),
@@ -82,168 +82,6 @@ class _DonationDriveState extends State<DonationDrive> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text("Donation 2", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      ],),
-                  ),
-                  Container (
-                    margin: const EdgeInsets.all(6.0),
-                    padding: const EdgeInsets.all(7.0),
-                    height: 60.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                      border: Border.all(
-                        width: 2,
-                        color: Colors.black,
-                      )
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Donation 3", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      ],),
-                  ),
-                  Container (
-                    margin: const EdgeInsets.all(6.0),
-                    padding: const EdgeInsets.all(7.0),
-                    height: 60.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                      border: Border.all(
-                        width: 2,
-                        color: Colors.black,
-                      )
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Donation 4", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      ],),
-                  ),
-                  Container (
-                    margin: const EdgeInsets.all(6.0),
-                    padding: const EdgeInsets.all(7.0),
-                    height: 60.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                      border: Border.all(
-                        width: 2,
-                        color: Colors.black,
-                      )
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Donation 5", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      ],),
-                  ),
-                  Container (
-                    margin: const EdgeInsets.all(6.0),
-                    padding: const EdgeInsets.all(7.0),
-                    height: 60.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                      border: Border.all(
-                        width: 2,
-                        color: Colors.black,
-                      )
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Donation 6", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      ],),
-                  ),
-                  Container (
-                    margin: const EdgeInsets.all(6.0),
-                    padding: const EdgeInsets.all(7.0),
-                    height: 60.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                      border: Border.all(
-                        width: 2,
-                        color: Colors.black,
-                      )
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Donation 7", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      ],),
-                  ),
-                  Container (
-                    margin: const EdgeInsets.all(6.0),
-                    padding: const EdgeInsets.all(7.0),
-                    height: 60.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                      border: Border.all(
-                        width: 2,
-                        color: Colors.black,
-                      )
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Donation 8", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      ],),
-                  ),
-                  Container (
-                    margin: const EdgeInsets.all(6.0),
-                    padding: const EdgeInsets.all(7.0),
-                    height: 60.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                      border: Border.all(
-                        width: 2,
-                        color: Colors.black,
-                      )
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Donation 9", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      ],),
-                  ),
-                  Container (
-                    margin: const EdgeInsets.all(6.0),
-                    padding: const EdgeInsets.all(7.0),
-                    height: 60.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                      border: Border.all(
-                        width: 2,
-                        color: Colors.black,
-                      )
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Donation 10", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      ],),
-                  ),
-                  Container (
-                    margin: const EdgeInsets.all(6.0),
-                    padding: const EdgeInsets.all(7.0),
-                    height: 60.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                      border: Border.all(
-                        width: 2,
-                        color: Colors.black,
-                      )
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Donation 11", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       ],),
                   ),
                 ],
