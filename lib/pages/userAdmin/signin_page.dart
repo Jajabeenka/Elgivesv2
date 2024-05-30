@@ -5,6 +5,9 @@ import '../../providers/auth_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'signup_page.dart';
+import 'dart:convert';
+
+
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -20,16 +23,21 @@ final GoogleSignIn _googleSignIn = GoogleSignIn(
   ]
 );
 
+bool isValidUsername(String username) {
+  return username.isNotEmpty;
+}
+
 class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
-  String? email;
+  String? username;
   String? password;
   bool showSignInErrorMessage = false;
+  bool _signInPressed = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF8D1436),
+      backgroundColor: const Color(0xFF8D1436),
       body: SingleChildScrollView(
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 80, horizontal: 30),
@@ -54,12 +62,12 @@ class _SignInPageState extends State<SignInPage> {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Color(0xFFFFC107),
+                    color: const Color(0xFFFFC107),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Column(
                     children: [
-                      emailField,
+                      usernameField,
                       const SizedBox(height: 20),
                       passwordField,
                     ],
@@ -68,7 +76,7 @@ class _SignInPageState extends State<SignInPage> {
                 const SizedBox(height: 20),
                 submitButton,
                 const SizedBox(height: 20),
-                googleSignInButton, // Corrected the naming here
+                googleSignInButton,
                 const SizedBox(height: 15),
                 signUpButton,
               ],
@@ -91,12 +99,12 @@ class _SignInPageState extends State<SignInPage> {
         ),
       );
 
-  Widget get emailField => TextFormField(
+  Widget get usernameField => TextFormField(
         decoration: InputDecoration(
           filled: true,
           fillColor: Colors.white,
-          labelText: "Email",
-          hintText: "juandelacruz09@gmail.com",
+          labelText: "Username",
+          hintText: "yourusername",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -112,10 +120,10 @@ class _SignInPageState extends State<SignInPage> {
             color: Colors.black,
           ),
         ),
-        onSaved: (value) => setState(() => email = value),
+        onSaved: (value) => setState(() => username = value),
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return "Please enter your email";
+            return "Please enter your username";
           }
           return null;
         },
@@ -152,45 +160,53 @@ class _SignInPageState extends State<SignInPage> {
         },
       );
 
-
   Widget get submitButton => ElevatedButton(
         onPressed: () async {
-
-
           if (_formKey.currentState!.validate()) {
-            _formKey.currentState!.save();
-            String? message = await context
-                .read<UserAuthProvider>()
-                .authService
-                .signIn(email!, password!);
-
             setState(() {
-              showSignInErrorMessage = message != null && message.isNotEmpty;
+              _signInPressed = true;
             });
 
+            _formKey.currentState!.save();
+            String? message = await context.read<UserAuthProvider>().authService.signIn(username!, password!);
 
+            if (message != "Successful!") {
+              setState(() {
+                showSignInErrorMessage = true;
+              });
+            } else {
+              // Handle successful sign in
+            }
+
+            setState(() {
+              _signInPressed = false;
+            });
           }
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFF01563F),
-          textStyle: TextStyle(color: Colors.white),
+          backgroundColor: const Color(0xFF01563F),
+          textStyle: const TextStyle(color: Colors.white),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
-          padding: EdgeInsets.symmetric(vertical: 12.0),
+          padding: const EdgeInsets.symmetric(vertical: 12.0),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(width: 10.0),
-            Text(
-              "Sign in",
-              style: TextStyle(
-                color: Color(0xFFFFC107),
-                fontWeight: FontWeight.bold,
-                fontSize: 16.0,
+            if (_signInPressed) 
+              const CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFFC107)),
               ),
-            ),
+            if (!_signInPressed) 
+              const Text(
+                "Sign in",
+                style: TextStyle(
+                  color: Color(0xFFFFC107),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
+                ),
+              ),
           ],
         ),
       );
@@ -206,16 +222,16 @@ class _SignInPageState extends State<SignInPage> {
   Widget get googleSignInButton => ElevatedButton(
         onPressed: signInWithGoogle,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFF01563F),
-          textStyle: TextStyle(color: Colors.white),
+          backgroundColor: const Color(0xFF01563F),
+          textStyle: const TextStyle(color: Colors.white),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
           ),
-          padding: EdgeInsets.symmetric(vertical: 12.0),
+          padding: const EdgeInsets.symmetric(vertical: 12.0),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: const [
             Icon(
               FontAwesomeIcons.google,
               color: Colors.white,
