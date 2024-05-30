@@ -53,7 +53,8 @@ class DonationDriveModal extends StatelessWidget {
               // Instantiate a todo objeect to be inserted, default userID will be 1, the id will be the next id in the list
               Drive temp = Drive(
                   driveId: 1,
-                  driveName: _formFieldController.text);
+                  driveName: _formFieldController.text,
+                  );
 
               context.read<DonationDriveProvider>().addDrive(temp);
 
@@ -61,24 +62,24 @@ class DonationDriveModal extends StatelessWidget {
               Navigator.of(context).pop();
               break;
             }
-          // case 'Edit':
-          //   {
-          //     context
-          //         .read<TodoListProvider>()
-          //         .editTodo(item!.id!, _formFieldController.text);
+          case 'Edit':
+            {
+              context
+                  .read<DonationDriveProvider>()
+                  .editDrive(item!.id!, _formFieldController.text);
 
-          //     // Remove dialog after editing
-          //     Navigator.of(context).pop();
-          //     break;
-          //   }
-          // case 'Delete':
-          //   {
-          //     context.read<TodoListProvider>().deleteTodo(item!.id!);
+              // Remove dialog after editing
+              Navigator.of(context).pop();
+              break;
+            }
+          case 'Delete':
+            {
+              context.read<DonationDriveProvider>().deleteDrive(item!.id!);
 
-          //     // Remove dialog after editing
-          //     Navigator.of(context).pop();
-          //     break;
-          //   }
+              // Remove dialog after editing
+              Navigator.of(context).pop();
+              break;
+            }
         }
       },
       style: TextButton.styleFrom(

@@ -15,7 +15,7 @@ class DonationDriveProvider with ChangeNotifier {
   }
   // getter
   // Stream<QuerySnapshot> get donation => _donationsListStream;
-  Stream<QuerySnapshot> get donationDrive => _donationDriveListStream;
+  Stream<QuerySnapshot> get drive => _donationDriveListStream;
   
   //get friends from the database
   void fetchDonationDriveList() {
@@ -31,6 +31,14 @@ class DonationDriveProvider with ChangeNotifier {
   }
 
   // //delete
+  void deleteDrive(String id) async {
+    await firebaseService.deleteDrive(id);
+    notifyListeners();
+  }
 
   // //edits
+  void editDrive(String id, String newTitle) async {
+    await firebaseService.editDrive(id, newTitle);
+    notifyListeners();
+  }
 }
