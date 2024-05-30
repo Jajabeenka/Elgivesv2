@@ -2,7 +2,6 @@ import 'package:elgivesv2/models/user.dart';
 import 'package:elgivesv2/pages/userAdmin/admin/adminDrawer.dart';
 import 'package:elgivesv2/pages/userAdmin/admin/organizationDetailsPage.dart';
 import 'package:elgivesv2/providers/user_provider.dart';
-import 'package:elgivesv2/slambook_widgets/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
