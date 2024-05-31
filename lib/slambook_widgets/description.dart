@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
-class Weight extends StatefulWidget {
+class Description extends StatefulWidget {
   final Function callback;
-  const Weight(this.callback, {super.key});
+  const Description(this.callback, {super.key});
 
   @override
-  State<Weight> createState() => _WeightState();
+  State<Description> createState() => _DescriptionState();
 }
 
-class _WeightState extends State<Weight> {
-  final TextEditingController _weightController = TextEditingController();
+class _DescriptionState extends State<Description> {
+  final TextEditingController _descriptionController = TextEditingController();
 
   @override
   void dispose() {
-    _weightController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 
@@ -36,29 +36,27 @@ class _WeightState extends State<Weight> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          //   child: Text(
-          //     'Enter Weight:',
-          //     style: TextStyle(
-          //       fontSize: 18,
-          //       fontWeight: FontWeight.bold,
-          //       color: Color(0xFF01563F),
-          //     ),
-          //   ),
-          // ),
-          SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: Text(
+              'Enter Description:',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF01563F),
+              ),
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20), // Padding added here
             child: TextFormField(
-              controller: _weightController,
+              controller: _descriptionController,
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 16,
               ),
               validator: (val) {
-                if (val == null || val.isEmpty) return "Enter a Weight";
-                if (int.tryParse(val) == null) return "Enter a valid Weight";
+                if (val == null || val.isEmpty) return "Enter Description";
                 return null;
               },
               onChanged: (value) {
@@ -81,7 +79,7 @@ class _WeightState extends State<Weight> {
                     width: 2,
                   ),
                 ),
-                hintText: "Enter Name",
+                hintText: "Enter Description",
                 hintStyle: TextStyle(color: Colors.grey),
               ),
             ),

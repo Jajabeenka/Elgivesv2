@@ -1,10 +1,10 @@
-import 'package:elgivesv2/api/firebase_auth_api.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'signup_page.dart';
+import 'home_page.dart'; // Ensure you have this import for the home page
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -22,7 +22,7 @@ final GoogleSignIn _googleSignIn = GoogleSignIn(
 
 class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
-  String? email;
+  String? username;
   String? password;
   bool showSignInErrorMessage = false;
 
@@ -59,7 +59,7 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                   child: Column(
                     children: [
-                      emailField,
+                      usernameField,
                       const SizedBox(height: 20),
                       passwordField,
                     ],
@@ -68,7 +68,7 @@ class _SignInPageState extends State<SignInPage> {
                 const SizedBox(height: 20),
                 submitButton,
                 const SizedBox(height: 20),
-                googleSignInButton, // Corrected the naming here
+                googleSignInButton,
                 const SizedBox(height: 15),
                 signUpButton,
               ],
@@ -91,12 +91,12 @@ class _SignInPageState extends State<SignInPage> {
         ),
       );
 
-  Widget get emailField => TextFormField(
+  Widget get usernameField => TextFormField(
         decoration: InputDecoration(
           filled: true,
           fillColor: Colors.white,
-          labelText: "Email",
-          hintText: "juandelacruz09@gmail.com",
+          labelText: "Username",
+          hintText: "juandelacruz09",
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -112,10 +112,10 @@ class _SignInPageState extends State<SignInPage> {
             color: Colors.black,
           ),
         ),
-        onSaved: (value) => setState(() => email = value),
+        onSaved: (value) => setState(() => username = value),
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return "Please enter your email";
+            return "Please enter your username";
           }
           return null;
         },
@@ -152,23 +152,30 @@ class _SignInPageState extends State<SignInPage> {
         },
       );
 
-
   Widget get submitButton => ElevatedButton(
         onPressed: () async {
-
-
           if (_formKey.currentState!.validate()) {
             _formKey.currentState!.save();
             String? message = await context
                 .read<UserAuthProvider>()
-                .authService
-                .signIn(email!, password!);
+                .signInWithUsername(username!, password!);
 
             setState(() {
               showSignInErrorMessage = message != null && message.isNotEmpty;
             });
 
-
+            if (!showSignInErrorMessage) {
+              // Navigate to the home page or desired page after successful sign-in
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const HomePage()),
+              );
+            } else {
+              // Show error message
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(message ?? 'Sign-in failed')),
+              );
+            }
           }
         },
         style: ElevatedButton.styleFrom(
@@ -188,8 +195,7 @@ class _SignInPageState extends State<SignInPage> {
               style: TextStyle(
                 color: Color(0xFFFFC107),
                 fontWeight: FontWeight.bold,
-                fontSize: 16.0,
-              ),
+                fontSize: 16.0),
             ),
           ],
         ),
@@ -226,8 +232,7 @@ class _SignInPageState extends State<SignInPage> {
               style: TextStyle(
                 color: Color(0xFFFFC107),
                 fontWeight: FontWeight.bold,
-                fontSize: 16.0,
-              ),
+                fontSize: 16.0),
             ),
           ],
         ),

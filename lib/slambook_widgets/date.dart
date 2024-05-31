@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
 
 class Date extends StatefulWidget {
   final Function(DateTime) callback;
@@ -36,13 +38,14 @@ class _DateState extends State<Date> {
 
   @override
   Widget build(BuildContext context) {
+    String currentDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.9, // 90% of screen width
             child: ElevatedButton(
               onPressed: () => _selectDate(context),
               style: ElevatedButton.styleFrom(
@@ -53,14 +56,21 @@ class _DateState extends State<Date> {
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                child: Text(
-                  selectedDate != null
-                      ? 'Selected Date: ${selectedDate!.toString().split(' ')[0]}'
-                      : 'Select Date',
-                  style: TextStyle(
-                    color: Color(0xFFFFC107),
-                    fontSize: 16,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.calendar_today, color: Color(0xFFFFC107),), 
+                    SizedBox(width: 8), 
+                    Text(
+                      selectedDate != null
+                          ? 'Selected Date: ${selectedDate!.toString().split(' ')[0]}'
+                          : 'Select Date: ${currentDate}',
+                      style: TextStyle(
+                        color: Color(0xFFFFC107),
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

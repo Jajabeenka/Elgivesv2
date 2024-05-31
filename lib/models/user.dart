@@ -10,8 +10,6 @@ class AppUser {
   final int accountType;
   final bool status;
 
-
-
   AppUser({
     required this.uid,
     required this.email,
@@ -23,7 +21,7 @@ class AppUser {
     required this.status,
   });
 
-   AppUser duplicate({
+  AppUser duplicate({
     String? email,
     String? uid,
     String? username,
@@ -32,8 +30,6 @@ class AppUser {
     List<String>? addresses,
     int? accountType,
     bool? status,
- 
-
   }) {
     return AppUser(
       email: email ?? this.email,
@@ -44,23 +40,21 @@ class AppUser {
       addresses: addresses ?? this.addresses,
       accountType: accountType ?? this.accountType,
       status: status ?? this.status,
- 
     );
   }
 
   factory AppUser.fromJson(Map<String, dynamic> json) {
-  return AppUser(
-    uid: json['uid'],
-    email: json['email'],
-    username: json['username'],
-    name: json['name'],
-    contactNumber: json['contactNumber'],
-    addresses: List<String>.from(json['addresses']),
-    accountType: json['accountType'],
-    status: json['status'] ?? false,
-
-  );
-}
+    return AppUser(
+      uid: json['uid'],
+      email: json['email'],
+      username: json['username'],
+      name: json['name'],
+      contactNumber: json['contactNumber'],
+      addresses: List<String>.from(json['addresses']),
+      accountType: json['accountType'],
+      status: json['status'] ?? false,
+    );
+  }
 
   static List<AppUser> fromJsonArray(String jsonData) {
     final Iterable<dynamic> data = jsonDecode(jsonData);
@@ -77,7 +71,6 @@ class AppUser {
       'addresses': addresses,
       'accountType': accountType,
       'status': status,
- 
     };
   }
 }

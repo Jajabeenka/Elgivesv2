@@ -2,6 +2,8 @@ import 'package:elgivesv2/pages/userAdmin/home_page.dart';
 import 'package:elgivesv2/pages/userAdmin/signup_page.dart';
 import 'package:flutter/material.dart';
 
+import '../orgsPage.dart';
+
 class SplashScreen extends StatefulWidget {
   final Widget? child;
 
