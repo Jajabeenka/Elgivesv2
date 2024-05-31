@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 
 class AddDrivePage extends StatelessWidget {
@@ -14,12 +16,15 @@ class AddDrivePage extends StatelessWidget {
             Container(
               width: 280,
               margin: EdgeInsets.only(left: 40, right: 40, top: 20, bottom: 10),
+              // ignore: prefer_const_constructors
               child: TextField(
+                // ignore: prefer_const_constructors
                 style: TextStyle(
                   fontSize: 20,
                   height: 1.3,
                   color: Colors.black
                 ),
+                // ignore: prefer_const_constructors
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   labelText: "Name",
@@ -33,6 +38,7 @@ class AddDrivePage extends StatelessWidget {
             Container(
               width: 280,
               margin: EdgeInsets.only(left: 40, right: 40, top: 20, bottom: 10),
+              // ignore: prefer_const_constructors
               child: TextField(
                 style: TextStyle(
                   fontSize: 20,
