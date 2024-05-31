@@ -53,5 +53,9 @@ android {
 }
 
 flutter {
-    source = "../.."
+    source '../..'
+}
+
+dependencies {
+    implementation 'androidx.multidex:multidex:2.0.1' // Add multidex dependency
 }
