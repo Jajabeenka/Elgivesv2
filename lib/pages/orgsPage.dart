@@ -7,7 +7,19 @@ import 'package:provider/provider.dart';
 import '../provider/orgs_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class OrgsPage extends StatelessWidget {
+class OrgsPage extends StatefulWidget {
+  @override
+  _OrgsPageState createState() => _OrgsPageState();
+}
+
+class _OrgsPageState extends State<OrgsPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch organizations data here
+    Provider.of<OrganizationProvider>(context, listen: false).fetchOrganizationsList();
+  }
+
   @override
   Widget build(BuildContext context) {
     Stream<QuerySnapshot> donationsListStream =
@@ -32,7 +44,7 @@ class OrgsPage extends StatelessWidget {
           if (snapshot.hasError) {
             return Center(
               child: Text(
-                "Oops! Something went wrong.",
+                "Something went wrong.",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -131,11 +143,11 @@ class OrgsPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         CircleAvatar(
-                          radius: 30, // Increase the radius for a bigger icon
+                          radius: 30, 
                           child: Icon(
                             Icons.person,
                             color: Color(0xFFFFC107),
-                            size: 36, // Increase the icon size
+                            size: 36, 
                           ),
                           backgroundColor: Colors.white,
                         ),
@@ -145,8 +157,8 @@ class OrgsPage extends StatelessWidget {
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
-                            fontSize: 18, // Increase font size
-                            shadows: [ // Add shadow for emphasis
+                            fontSize: 18, 
+                            shadows: [ 
                               Shadow(
                                 blurRadius: 2.0,
                                 color: Colors.black.withOpacity(0.5),

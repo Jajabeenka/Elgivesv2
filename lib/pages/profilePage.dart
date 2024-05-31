@@ -27,18 +27,18 @@ class ProfilePage extends StatelessWidget {
       body: Stack(
         children: [
           Container(
-                height: 170,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.blue.shade800,
-                      Colors.blue.shade400,
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                ),
+            height: 170,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.blue.shade800,
+                  Colors.blue.shade400,
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
+            ),
+          ),
           StreamBuilder(
             stream: donorsListStream,
             builder: (context, snapshot) {

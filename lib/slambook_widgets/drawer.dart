@@ -37,19 +37,28 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           DrawerHeader(
             decoration: const BoxDecoration(
               color: Color.fromARGB(255, 5, 12, 49),
-              image: DecorationImage(
-                image: AssetImage('assets/images/drawer_header.jpg'),
-                fit: BoxFit.cover,
+              // image: DecorationImage(
+              //   image: AssetImage('lib/assets/elgivesLogo.png'),
+                // fit: BoxFit.cover,
               ),
-            ),
-            child: const Text(
-              "DONATIONS",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24.0,
-                fontWeight: FontWeight.bold,
+            child: Row(
+            children: [
+              Image.asset(
+                'lib/assets/elgivesLogo.png',
+                width: 50, // Adjust the width as needed
+                height: 50, // Adjust the height as needed
               ),
-            ),
+              SizedBox(width: 10), // Adjust the spacing between the image and text
+              Text(
+                "DONATIONS",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
           ),
           Divider(
             height: 1,
@@ -63,7 +72,19 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               style: TextStyle(color: foregroundColor),
             ),
             onTap: () {
-              Navigator.popUntil(context, ModalRoute.withName("/organizations"));
+              // Navigator.pop(context);
+              // Navigator.pushReplacementNamed(context, "/organizations");
+              // Navigator.popUntil(context, ModalRoute.withName('/organizations'));
+              // Navigator.pop(context);
+              // if (ModalRoute.of(context)!.settings.name != "/organizations") {
+              //   Navigator.pushReplacementNamed(context, "/organizations");
+              // }
+              Navigator.pop(context);
+              var currentRoute = ModalRoute.of(context);
+              if (!(currentRoute is MaterialPageRoute && currentRoute.settings.name == "/organizations")) {
+                Navigator.pushReplacementNamed(context, "/organizations");
+              }
+
             },
           ),
           ListTile(
@@ -74,7 +95,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             ),
             onTap: () {
               Navigator.pop(context);
-              Navigator.pushNamed(context, "/donorProfile");
+              if (ModalRoute.of(context)!.settings.name != "/donorProfile") {
+                Navigator.pushNamed(context, "/donorProfile");
+              }
             },
           ),
           Divider(

@@ -21,8 +21,13 @@ class FirebaseTodoAPI {
     try {
       QuerySnapshot snapshot = await db.collection("donations").where('donationId', isEqualTo: donationId).get();
       if (snapshot.docs.isNotEmpty) {
-        await snapshot.docs.first.reference.update({'status': status});
-        return "Successfully updated!";
+      DocumentSnapshot document = snapshot.docs.first;
+      String currentStatus = document['status'];
+      if (currentStatus == "cancelled") {
+        return "Status is already cancelled and cannot be changed!";
+      }
+      await document.reference.update({'status': status});
+      return "Successfully updated!";
       } else {
         return "Donation not found!";
       }
