@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
      if (user!.accountType == 1){
             return   HomeScreen();
           } else if (user!.accountType == 3){
-            return  DonorListWidget();
+            return  OrgsPage();
           } else {
             return  HomeScreen();
           }
