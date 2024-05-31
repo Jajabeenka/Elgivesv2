@@ -58,6 +58,7 @@ class FirebaseAuthAPI {
       String username,
       String name,
       String contactNumber,
+      String description,
       List<String> addresses,
       int accountType,
       bool status) async {
@@ -73,6 +74,7 @@ class FirebaseAuthAPI {
           email: email,
           username: username,
           name: name,
+          description: description,
           contactNumber: contactNumber,
           addresses: addresses,
           accountType: accountType,
@@ -105,9 +107,13 @@ class FirebaseAuthAPI {
     return "Error";
   }
 
-   Future<String?> fetchEmail(String username) async {
+  Future<String?> fetchEmail(String username) async {
     try {
-      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance.collection('users').where("username", isEqualTo: username).get();
+      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+          .instance
+          .collection('users')
+          .where("username", isEqualTo: username)
+          .get();
 
       if (snapshot.docs.isNotEmpty) {
         return snapshot.docs.first.get('email') as String?;
@@ -121,28 +127,27 @@ class FirebaseAuthAPI {
   }
 
   Future<bool> isUsernameUnique(String username) async {
-  try {
-    QuerySnapshot querySnapshot = await db
-        .collection('users')
-        .where('username', isEqualTo: username)
-        .get();
+    try {
+      QuerySnapshot querySnapshot = await db
+          .collection('users')
+          .where('username', isEqualTo: username)
+          .get();
 
-    // Logging the size of the query result
-    print('Query size: ${querySnapshot.size}');
+      // Logging the size of the query result
+      print('Query size: ${querySnapshot.size}');
 
-    if (querySnapshot.size == 0) {
-      return true;
+      if (querySnapshot.size == 0) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      // Logging the error
+      print('Error in isUsernameUnique: $e');
+      return false;
     }
-    return false;
-  } catch (e) {
-    // Logging the error
-    print('Error in isUsernameUnique: $e');
-    return false;
   }
-}
 
   Future<void> signOut() async {
     await auth.signOut();
   }
-
 }

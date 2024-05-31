@@ -6,11 +6,10 @@ class AppUser {
   final String username;
   final String name;
   final String contactNumber;
+  final String description;
   final List<String> addresses;
   final int accountType;
   final bool status;
-
-
 
   AppUser({
     required this.uid,
@@ -18,22 +17,22 @@ class AppUser {
     required this.username,
     required this.name,
     required this.contactNumber,
+    required this.description,
     required this.addresses,
     required this.accountType,
     required this.status,
   });
 
-   AppUser duplicate({
+  AppUser duplicate({
     String? email,
     String? uid,
     String? username,
     String? name,
     String? contactNumber,
+    String? description,
     List<String>? addresses,
     int? accountType,
     bool? status,
- 
-
   }) {
     return AppUser(
       email: email ?? this.email,
@@ -41,26 +40,26 @@ class AppUser {
       username: username ?? this.username,
       name: name ?? this.name,
       contactNumber: contactNumber ?? this.contactNumber,
+      description: description ?? this.description,
       addresses: addresses ?? this.addresses,
       accountType: accountType ?? this.accountType,
       status: status ?? this.status,
- 
     );
   }
 
   factory AppUser.fromJson(Map<String, dynamic> json) {
-  return AppUser(
-    uid: json['uid'],
-    email: json['email'],
-    username: json['username'],
-    name: json['name'],
-    contactNumber: json['contactNumber'],
-    addresses: List<String>.from(json['addresses']),
-    accountType: json['accountType'],
-    status: json['status'] ?? false,
-
-  );
-}
+    return AppUser(
+      uid: json['uid'],
+      email: json['email'],
+      username: json['username'],
+      name: json['name'],
+      contactNumber: json['contactNumber'],
+      description: json['description'],
+      addresses: List<String>.from(json['addresses']),
+      accountType: json['accountType'],
+      status: json['status'] ?? false,
+    );
+  }
 
   static List<AppUser> fromJsonArray(String jsonData) {
     final Iterable<dynamic> data = jsonDecode(jsonData);
@@ -74,10 +73,10 @@ class AppUser {
       'username': username,
       'name': name,
       'contactNumber': contactNumber,
+      'description': description,
       'addresses': addresses,
       'accountType': accountType,
       'status': status,
- 
     };
   }
 }

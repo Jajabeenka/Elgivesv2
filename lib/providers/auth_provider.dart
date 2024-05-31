@@ -66,11 +66,12 @@ class UserAuthProvider with ChangeNotifier {
       String username,
       String name,
       String contactNo,
+      String description,
       List<String> address,
       int accountType,
       bool isApproved) async {
     String? uid = await authService.signUp(email, password, username, name,
-        contactNo, address, accountType, isApproved);
+        contactNo, description, address, accountType, isApproved);
     notifyListeners();
     return uid;
   }
