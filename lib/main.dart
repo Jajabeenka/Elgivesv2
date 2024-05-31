@@ -1,4 +1,3 @@
-
 import 'package:elgivesv2/pages/profilePage.dart';
 import 'package:elgivesv2/pages/userAdmin/admin/adminApprovalPage.dart';
 import 'package:elgivesv2/pages/userAdmin/admin/adminDonors.dart';
@@ -15,12 +14,15 @@ import 'provider/donation_provider.dart';
 
 import 'package:elgivesv2/pages/userAdmin/splash_screen.dart';
 import 'providers/auth_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  await Permission.storage.request();
 
   runApp(
     MultiProvider(
@@ -50,7 +52,6 @@ class MyApp extends StatelessWidget {
       routes: { 
         '/': (context) => const SplashScreen(),
         '/organizations': (context) => OrgsPage(),
-        '/donatePage': (context) => FormSample(),
         '/donorProfile': (context) => ProfilePage(),
         '/adminApproval': (context) => adminApproval(),
         '/adminDonors': (context) => DonorListWidget()

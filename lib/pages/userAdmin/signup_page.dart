@@ -302,7 +302,10 @@ Widget signInAs() {
           ),
           onSaved: (value) => setState(() => password = value),
           validator: (value) {
-            if (value == null || value.isEmpty || value.length < 6) {
+            if (value == null ||
+                value.isEmpty ||
+                value.length < 6 ) {
+
               return "Password must be at least 6 characters and contain letters, numbers, and special characters.";
             }
             return null;
