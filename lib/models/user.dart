@@ -9,6 +9,8 @@ class AppUser {
   final List<String> addresses;
   final int accountType;
   final bool status;
+  final String description;
+  final List<String> proof;
 
   AppUser({
     required this.uid,
@@ -19,27 +21,33 @@ class AppUser {
     required this.addresses,
     required this.accountType,
     required this.status,
+    required this.description,
+    required this.proof,
   });
 
   AppUser duplicate({
-    String? email,
     String? uid,
+    String? email,
     String? username,
     String? name,
     String? contactNumber,
     List<String>? addresses,
     int? accountType,
     bool? status,
+    String? description,
+    List<String>? proof,
   }) {
     return AppUser(
-      email: email ?? this.email,
       uid: uid ?? this.uid,
+      email: email ?? this.email,
       username: username ?? this.username,
       name: name ?? this.name,
       contactNumber: contactNumber ?? this.contactNumber,
       addresses: addresses ?? this.addresses,
       accountType: accountType ?? this.accountType,
       status: status ?? this.status,
+      description: description ?? this.description,
+      proof: proof ?? this.proof,
     );
   }
 
@@ -53,6 +61,8 @@ class AppUser {
       addresses: List<String>.from(json['addresses']),
       accountType: json['accountType'],
       status: json['status'] ?? false,
+      description: json['description'] ?? '',
+      proof: List<String>.from(json['proof'] ?? []),
     );
   }
 
@@ -61,16 +71,18 @@ class AppUser {
     return data.map<AppUser>((dynamic d) => AppUser.fromJson(d)).toList();
   }
 
-  Map<String, dynamic> toJson(AppUser appUser) {
+  Map<String, dynamic> toJson() {
     return {
-      'email': email,
       'uid': uid,
+      'email': email,
       'username': username,
       'name': name,
       'contactNumber': contactNumber,
       'addresses': addresses,
       'accountType': accountType,
       'status': status,
+      'description': description,
+      'proof': proof,
     };
   }
 }

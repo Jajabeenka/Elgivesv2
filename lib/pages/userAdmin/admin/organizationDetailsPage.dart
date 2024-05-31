@@ -149,6 +149,7 @@ class _OrgDetailPageState extends State<OrgDetailPage> {
         iconTheme: IconThemeData(color: Color(0xFF8D1436)),
       ),
       body: orgDetails(),
+
     );
   }
 
@@ -243,6 +244,7 @@ class _OrganizationDetailsState extends State<OrganizationDetails> {
                     children: [
                       aboutSection(),
                       const SizedBox(height: 15),
+                      image()
                     ],
                   ),
                 ),
@@ -319,4 +321,32 @@ class _OrganizationDetailsState extends State<OrganizationDetails> {
       ],
     );
   }
+
+  Widget image() {
+  return Center(
+    child: organization!.proof.isNotEmpty 
+      ? ListView.builder(
+          shrinkWrap: true,
+          itemCount: organization!.proof.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.network(
+                organization!.proof[index],
+                height: 200,
+                fit: BoxFit.cover,
+                errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                  return const Icon(
+                    Icons.error,
+                    size: 100,
+                    color: Colors.grey,
+                  );
+                },
+              ),
+            );
+          },
+        )
+      : const Text('No images available'),
+  );
+}
 }

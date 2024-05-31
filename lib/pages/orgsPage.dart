@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../models/organization.dart';
 import '../models/user.dart';
 import '../pages/donatePage.dart';
 import '../models/donation.dart';
+import '../providers/auth_provider.dart';
 import '../providers/user_provider.dart';
 import '../slambook_widgets/drawer.dart';
 import 'package:provider/provider.dart';
@@ -28,9 +30,17 @@ class _OrgsPageState extends State<OrgsPage> {
   Widget build(BuildContext context) {
     // Stream<QuerySnapshot> donationsListStream =
     //     context.watch<OrganizationProvider>().organization;
+
     final userProvider = Provider.of<UserProvider>(context);
-    final user = context.watch<UserProvider>();
-    final userId = user.selectedUser?.uid;
+    // final user = context.watch<UserProvider>();
+    // final userId = user.selectedUser?.uid;
+    String? getUserId() {
+    User? user = context.read<UserAuthProvider>().user;
+    if (user != null) {
+      return user.uid;
+    }
+    return null;
+  }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -99,6 +109,7 @@ class _OrgsPageState extends State<OrgsPage> {
               ),
             );
           }
+          String? uid = getUserId();
           final organizations = snapshot.data!;
           return Padding(
             padding: const EdgeInsets.all(16.0),
@@ -122,10 +133,10 @@ class _OrgsPageState extends State<OrgsPage> {
                       MaterialPageRoute(
                         builder: (context) => FormSample(
                           orgName: org.name,
-                          orgDescri: "This is an org",
+                          orgDescri: org.description,
                           orgStatus: org.status,
                           orgId: org.uid,
-                          userId: "dnwuibdw",
+                          userId: uid!,
                         ),
                       ),
                     );

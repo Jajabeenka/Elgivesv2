@@ -6,6 +6,7 @@ class FirebaseAuthAPI {
   static final FirebaseAuth auth = FirebaseAuth.instance;
   static final FirebaseFirestore db = FirebaseFirestore.instance;
 
+
   User? getUser() {
     return auth.currentUser;
   }
@@ -33,24 +34,30 @@ class FirebaseAuthAPI {
     }
   }
 
-  Future<String?> signIn(String email, String password) async {
-    try {
-      await auth.signInWithEmailAndPassword(email: email, password: password);
-      return "Successful!";
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'invalid-email') {
-        return e.message;
-      } else if (e.code == 'invalid-credential') {
-        return e.message;
-      } else if (e.code == 'wrong-password') {
-        return e.message;
-      } else if (e.code == 'user-not-found') {
-        return e.message;
-      } else {
-        return "Failed at ${e.code}: ${e.message}";
-      }
+ 
+Future<String?> signIn(String email, String password) async {
+  try {
+    await auth.signInWithEmailAndPassword(email: email, password: password);
+    
+    // Fetch user approval status after successful sign-in
+    bool? userApprovalStatus = await getUserApprovalStatus();
+    
+    // Check approval status
+    if (userApprovalStatus == false) {
+      // If the account is not approved, sign the user out and return an error message
+      await signOut();
+      return "Your account is not approved.";
     }
+    
+    return "Successful!";
+  } on FirebaseAuthException catch (e) {
+    return e.message; // Simplified to return the error message directly
+  } catch (e) {
+    return "Error: $e";
   }
+}
+
+
 
   Future<String?> signUp(
       String email,
@@ -60,7 +67,9 @@ class FirebaseAuthAPI {
       String contactNumber,
       List<String> addresses,
       int accountType,
-      bool status) async {
+      bool status,
+      String description,
+      List<String> proof) async {
     try {
       UserCredential credential = await auth.createUserWithEmailAndPassword(
         email: email,
@@ -77,14 +86,15 @@ class FirebaseAuthAPI {
           addresses: addresses,
           accountType: accountType,
           status: status,
+          description: description,
+          proof: proof,
         );
 
         // Save user information to Firestore
         try {
-          Map<String, dynamic> userData = newUser.toJson(newUser);
+          Map<String, dynamic> userData = newUser.toJson();
           await db.collection("users").doc(credential.user!.uid).set(userData);
-          return credential.user!.uid;
-          // Now the user is successfully added to Firestore
+          return credential.user!.uid; // Now the user is successfully added to Firestore
         } on FirebaseException catch (e) {
           return "Error in Firestore: ${e.code}: ${e.message}";
           // Handle Firestore error
@@ -93,21 +103,18 @@ class FirebaseAuthAPI {
         return "Error: User authentication failed.";
       }
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'email-already-in-use') {
-        return 'Error: The account already exists for that email.';
-      } else if (e.code == 'weak-password') {
-        return 'Error: Weak password';
-      }
+      return e.message; // Return the FirebaseAuthException message directly
     } catch (e) {
       return "Error: $e";
     }
-
-    return "Error";
   }
 
-   Future<String?> fetchEmail(String username) async {
+  Future<String?> fetchEmail(String username) async {
     try {
-      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance.collection('users').where("username", isEqualTo: username).get();
+      QuerySnapshot<Map<String, dynamic>> snapshot = await db
+          .collection('users')
+          .where("username", isEqualTo: username)
+          .get();
 
       if (snapshot.docs.isNotEmpty) {
         return snapshot.docs.first.get('email') as String?;
@@ -121,28 +128,27 @@ class FirebaseAuthAPI {
   }
 
   Future<bool> isUsernameUnique(String username) async {
-  try {
-    QuerySnapshot querySnapshot = await db
-        .collection('users')
-        .where('username', isEqualTo: username)
-        .get();
+    try {
+      QuerySnapshot querySnapshot = await db
+          .collection('users')
+          .where('username', isEqualTo: username)
+          .get();
 
-    // Logging the size of the query result
-    print('Query size: ${querySnapshot.size}');
+      // Logging the size of the query result
+      print('Query size: ${querySnapshot.size}');
 
-    if (querySnapshot.size == 0) {
-      return true;
+      if (querySnapshot.size == 0) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      // Logging the error
+      print('Error in isUsernameUnique: $e');
+      return false;
     }
-    return false;
-  } catch (e) {
-    // Logging the error
-    print('Error in isUsernameUnique: $e');
-    return false;
   }
-}
 
   Future<void> signOut() async {
     await auth.signOut();
   }
-
 }

@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/donor.dart';
 import '../models/donation.dart';
+import '../models/user.dart';
 import '../provider/donation_provider.dart';
 import '../provider/donor_provider.dart';
+import '../providers/auth_provider.dart';
+import '../providers/user_provider.dart'; 
 import '../slambook_widgets/donations.dart';
 import '../slambook_widgets/drawer.dart';
 import '../slambook_widgets/qr_scanner.dart';
@@ -12,8 +16,17 @@ import '../slambook_widgets/qr_scanner.dart';
 class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Stream<QuerySnapshot> donorsListStream = context.watch<DonorProvider>().donor;
-    Stream<QuerySnapshot> donationsListStream = context.watch<DonationProvider>().donation;
+    // Stream<QuerySnapshot> donorsListStream = context.watch<DonorProvider>().donor;
+    Stream<QuerySnapshot> donationsListStream =
+        context.watch<DonationProvider>().donation;
+
+    String? getUserId() {
+      User? user = context.read<UserAuthProvider>().user;
+      if (user != null) {
+        return user.uid;
+      }
+      return null;
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -40,7 +53,7 @@ class ProfilePage extends StatelessWidget {
             ),
           ),
           StreamBuilder(
-            stream: donorsListStream,
+            stream: context.watch<UserProvider>().donorStream, // Use the donorStream from UserProvider
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return Center(
@@ -50,13 +63,14 @@ class ProfilePage extends StatelessWidget {
                 return Center(
                   child: CircularProgressIndicator(),
                 );
-              } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return const Center(
-                  child: Text("No Donors Found"),
+                  child: Text("No Donor Found"),
                 );
               }
-              Donor donor = Donor.fromJson(snapshot.data?.docs[0].data() as Map<String, dynamic>);
-              var id = snapshot.data?.docs[0].id;
+
+              final donor = snapshot.data!.firstWhere(
+                  (user) => user.uid == getUserId());
 
               return SingleChildScrollView(
                 child: Padding(
@@ -186,16 +200,21 @@ class ProfilePage extends StatelessWidget {
                       SizedBox(height: 32),
                       StreamBuilder(
                         stream: donationsListStream,
+                        // .where((donation) =>
+                        //     donation.data()['userId'] == getUserId()),
                         builder: (context, snapshot) {
                           if (snapshot.hasError) {
                             return Center(
-                              child: Text("Error encountered! ${snapshot.error}"),
+                              child: Text(
+                                  "Error encountered! ${snapshot.error}"),
                             );
-                          } else if (snapshot.connectionState == ConnectionState.waiting) {
+                          } else if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
                             return Center(
                               child: CircularProgressIndicator(),
                             );
-                          } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                          } else if (!snapshot.hasData ||
+                              snapshot.data!.docs.isEmpty) {
                             return const Center(
                               child: Text("No Donations Found"),
                             );
@@ -206,8 +225,14 @@ class ProfilePage extends StatelessWidget {
                             itemCount: snapshot.data?.docs.length,
                             itemBuilder: (context, index) {
                               Donation donation = Donation.fromJson(
-                                  snapshot.data?.docs[index].data() as Map<String, dynamic>);
-                              return DonationWidget(donation: donation);
+                                  snapshot.data?.docs[index].data()
+                                      as Map<String, dynamic>);
+                                    if(donation.userId == getUserId())
+                                    {
+                                      return DonationWidget(donation: donation);
+                                    }
+                                    else {
+                                      return const SizedBox.shrink();}
                             },
                           );
                         },

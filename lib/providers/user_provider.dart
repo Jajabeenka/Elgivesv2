@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 /// A provider class that manages user data and interaction with Firebase.
 class UserProvider with ChangeNotifier {
   /// Firebase service instance for fetching and updating user data.
-  late FirebaseUserAPI fbService;
+  late final FirebaseUserAPI fbService;
 
   /// Stream of users from the database.
   Stream<List<AppUser>>? _dbStream;
@@ -30,7 +30,7 @@ class UserProvider with ChangeNotifier {
   Stream<List<AppUser>> get pendingOrgStream => _pendingOrgStream;
 
   /// Account type identifiers.
-  final int adminAccount = 1, donorAccount = 2, organizationAccount = 3;
+  static const int adminAccount = 1, donorAccount = 2, organizationAccount = 3;
 
   /// Currently selected user.
   AppUser? _selectedUser;
@@ -44,6 +44,10 @@ class UserProvider with ChangeNotifier {
   /// Constructor initializes the Firebase service and starts listening to the user stream.
   UserProvider() {
     fbService = FirebaseUserAPI();
+    _initializeStreams();
+  }
+
+  void _initializeStreams() {
     _dbStream = fbService.fetchUsers();
     _dbStream?.listen((users) {
       refresh();
@@ -71,10 +75,10 @@ class UserProvider with ChangeNotifier {
       });
 
       switch (accountType) {
-        case 2:
+        case donorAccount:
           _donorStream = sortedStream;
           break;
-        case 3:
+        case organizationAccount:
           if (approvalStatus) {
             _orgStream = sortedStream;
           } else {
@@ -134,7 +138,7 @@ class UserProvider with ChangeNotifier {
 
   /// Updates user details in the database.
   Future<String?> updateUser(String id, AppUser details) async {
-    String? message = await fbService.updateUser(id, details.toJson(details));
+    String? message = await fbService.updateUser(id, details.toJson());
     notifyListeners();
     return message;
   }

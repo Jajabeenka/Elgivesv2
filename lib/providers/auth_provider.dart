@@ -42,6 +42,8 @@ class UserAuthProvider with ChangeNotifier {
     });
   }
 
+  User? get certainUser => authService.getUser();
+
   String? _email;
 
   String? get email => _email;
@@ -55,7 +57,8 @@ class UserAuthProvider with ChangeNotifier {
     if (user == null) {
       return;
     }
-    _accountInfo = await UserProvider().getAccountInfo(user!.uid);
+    String uid = user!.uid; // Get the uid of the currently logged-in user
+    _accountInfo = await UserProvider().getAccountInfo(uid);
     _userApprovalStatus = _accountInfo?.status;
     notifyListeners();
   }
@@ -68,9 +71,11 @@ class UserAuthProvider with ChangeNotifier {
       String contactNo,
       List<String> address,
       int accountType,
-      bool isApproved) async {
+      bool isApproved,
+      String description,
+      List<String> proof) async {
     String? uid = await authService.signUp(email, password, username, name,
-        contactNo, address, accountType, isApproved);
+        contactNo, address, accountType, isApproved, description,  proof);
     notifyListeners();
     return uid;
   }
@@ -90,24 +95,21 @@ class UserAuthProvider with ChangeNotifier {
   }
 
   Future<String?> signIn(String email, String password) async {
-  
+    // Check approval status
+    if (_userApprovalStatus == false) {
+      return "Your account is not approved.";
+    } else {
+      // Attempt to sign in
+      String? message = await authService.signIn(email, password);
 
-      // Check approval status
-      if (_userApprovalStatus == false) {
-        return "Your account is not approved.";
-      }else{
-  // Attempt to sign in
-    String? message = await authService.signIn(email, password);
-
-    if (message != null) {
-      // Fetch user account info after successful sign-in
-      await _getAccountInfo();
+      if (message != null) {
+        // Fetch user account info after successful sign-in
+        await _getAccountInfo();
       }
 
       notifyListeners();
       return message;
     }
-
   }
 
   Future<bool> isUsernameUnique(String username) async {
