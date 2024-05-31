@@ -50,4 +50,15 @@ class DonationProvider with ChangeNotifier {
   //   await firebaseService.editTodo(nickname, age, status, happiness, superpower, motto, id);
   //   notifyListeners();
   // }
+  // //edits info of a friend with the given index from the databse
+  void editStatus(int donationId, String status) async {
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => EditPage(friend: friend)));
+    // _friends[index] = friend;
+    // notifyListeners();
+    await firebaseService.editStatus(donationId, status);
+    notifyListeners();
+  }
 }

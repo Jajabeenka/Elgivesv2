@@ -1,6 +1,10 @@
 import 'package:elgivesv2/pages/addDrivePage.dart';
 import 'package:elgivesv2/pages/profilePage.dart';
 import 'package:elgivesv2/provider/donationDrive_provider.dart';
+import 'package:elgivesv2/pages/profilePage.dart';
+import 'package:elgivesv2/provider/donationDrive_provider.dart';
+import 'package:elgivesv2/pages/userAdmin/admin/adminApprovalPage.dart';
+import 'package:elgivesv2/pages/userAdmin/admin/adminDonors.dart';
 import 'package:elgivesv2/provider/donor_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,12 +19,17 @@ import 'pages/orgProfile.dart';
 import 'pages/donationDrive.dart';
 import 'provider/donationDrive_provider.dart';
 
+import 'package:elgivesv2/pages/userAdmin/splash_screen.dart';
+import 'providers/auth_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  await Permission.storage.request();
 
   runApp(
     MultiProvider(
@@ -45,11 +54,13 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: { 
         '/organizations': (context) => OrgsPage(),
-        '/donatePage': (context) => FormSample(),
         '/donorProfile': (context) => ProfilePage(),
         '/orgProfile': (context) => OrgProfile(),
         '/donationDrive': (context) => DonationDrive(),
         '/addDrivePage': (context) => AddDrivePage(),
+        '/adminApproval': (context) => adminApproval(),
+        '/adminDonors': (context) => DonorListWidget()
+
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,

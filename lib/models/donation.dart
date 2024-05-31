@@ -6,8 +6,12 @@ class Donation {
   final String weight;
   final String? photo;
   final DateTime dateTime;
-  final List<String> addresses;
+  final String addresses;
   final String contactNumber;
+  final String status;
+  final String? userId;
+  final int donationId;
+  final String? orgId;
 
   Donation({
     required this.categories,
@@ -17,18 +21,26 @@ class Donation {
     required this.dateTime,
     required this.addresses,
     required this.contactNumber,
+    required this.status,
+    required this.userId,
+    required this.donationId,
+    required this.orgId,
   });
 
   // Factory constructor to instantiate object from json format
   factory Donation.fromJson(Map<String, dynamic> json) {
     return Donation(
-      categories: json['categories'],
-      pickupOrDropOff: json['id'],
-      weight: json['weight'],
+      categories: List<String>.from(json['categories'] ?? []),
+      pickupOrDropOff: json['pickupOrDropOff'] ?? '',
+      weight: json['weight'] ?? '',
       photo: json['photo'],
-      dateTime: DateTime.parse(json['dateTime']),
-      addresses: json['addresses'],
-      contactNumber: json['contactNumber'], 
+      dateTime: DateTime.parse(json['dateTime'] ?? DateTime.now().toString()),
+      addresses: json['addresses'] ?? '',
+      contactNumber: json['contactNumber'] ?? '',
+      status: json['status'] ?? '',
+      userId: json['userId'],
+      donationId: json['donationId'],
+      orgId: json['orgId']
     );
   }
 
@@ -46,6 +58,10 @@ class Donation {
       'dateTime': donation.dateTime.toString(),
       'addresses': donation.addresses,
       'contactNumber': donation.contactNumber,
+      'status': donation.status,
+      'userId': donation.userId,
+      'donationId' : donation.donationId,
+      'orgId' : donation.orgId
     };
   }
 

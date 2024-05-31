@@ -31,64 +31,59 @@ class _ItemState extends State<Item> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(20),
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Select Items:',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF01563F),
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.9,
+      child: Container(
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: Offset(0, 3),
             ),
-          ),
-          SizedBox(height: 15),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: _itemOptions.map((item) {
-              return FilterChip(
-                label: Text(
-                  item,
-                  style: TextStyle(
-                    color: widget.selectedOptions.contains(item)
-                        ? Colors.white
-                        : Color(0xFFFFC107),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+            child: Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              alignment: WrapAlignment.spaceAround, 
+              children: _itemOptions.map((item) {
+                return FilterChip(
+                  label: Text(
+                    item,
+                    style: TextStyle(
+                      color: widget.selectedOptions.contains(item)
+                          ? Colors.white
+                          : Color(0xFFFFC107),
+                    ),
                   ),
-                ),
-                backgroundColor: widget.selectedOptions.contains(item)
-                    ? Colors.blue
-                    : Color(0xFF01563F),
-                selected: widget.selectedOptions.contains(item),
-                onSelected: (bool value) {
-                  setState(() {
-                    if (value) {
-                      widget.selectedOptions.add(item);
-                    } else {
-                      widget.selectedOptions.remove(item);
-                    }
-                  });
-                  widget.onChanged(widget.selectedOptions);
-                },
-              );
-            }).toList(),
-          ),
-        ],
+                  backgroundColor: widget.selectedOptions.contains(item)
+                      ? Colors.blue
+                      : Color(0xFF01563F),
+                  selected: widget.selectedOptions.contains(item),
+                  onSelected: (bool value) {
+                    setState(() {
+                      if (value) {
+                        widget.selectedOptions.add(item);
+                      } else {
+                        widget.selectedOptions.remove(item);
+                      }
+                    });
+                    widget.onChanged(widget.selectedOptions);
+                  },
+                );
+              }).toList(),
+            ),),
+          ],
+        ),
       ),
     );
   }

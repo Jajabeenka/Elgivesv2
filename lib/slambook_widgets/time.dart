@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Time extends StatefulWidget {
   final Function(TimeOfDay) callback;
@@ -34,8 +35,8 @@ class _TimeState extends State<Time> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.9, // 90% of screen width
       child: ElevatedButton(
         onPressed: () => _selectTime(context),
         style: ElevatedButton.styleFrom(
@@ -46,14 +47,22 @@ class _TimeState extends State<Time> {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-          child: Text(
-            selectedTime != null
-                ? 'Selected Time: ${selectedTime!.format(context)}'
-                : 'Select Time',
-            style: TextStyle(
-              color: Color(0xFFFFC107),
-              fontSize: 16,
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.access_time, color: Color(0xFFFFC107),), // Add an icon here
+              SizedBox(width: 8), // Add some spacing between icon and text
+              Text(
+                selectedTime != null
+                    ? 'Selected Time: ${selectedTime!.format(context)}'
+                    : 'Select Time ${DateFormat.Hm().format(DateTime.now())}'
+,
+                style: TextStyle(
+                  color: Color(0xFFFFC107),
+                  fontSize: 16,
+                ),
+              ),
+            ],
           ),
         ),
       ),
