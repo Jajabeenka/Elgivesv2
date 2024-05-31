@@ -103,13 +103,13 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               }
             },
           ),
-          ListTile(
-            title: Text("Organization Profile", style: TextStyle(color: Color.fromARGB(255, 5, 12, 49))),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.pushNamed(context, "/orgProfile");
-            },
-          ),
+          // ListTile(
+          //   title: Text("Organization Profile", style: TextStyle(color: Color.fromARGB(255, 5, 12, 49))),
+          //   onTap: () {
+          //     Navigator.pop(context);
+          //     Navigator.pushNamed(context, "/orgProfile");
+          //   },
+          // ),
 
           Divider(
             height: 1,
