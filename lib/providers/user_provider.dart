@@ -94,7 +94,7 @@ class UserProvider with ChangeNotifier {
 
   /// Fetches donors from the database.
   void fetchDonors() {
-    _fetchUsersByType(donorAccount, false);
+    _fetchUsersByType(donorAccount, true);
   }
 
   /// Fetches approved organizations from the database.

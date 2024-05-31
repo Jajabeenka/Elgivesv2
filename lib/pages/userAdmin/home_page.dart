@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
           } else if (user!.accountType == 3){
             return  OrgsPage();
           } else {
-            return  HomeScreen();
+            return  OrgsPage();
           }
 
           }

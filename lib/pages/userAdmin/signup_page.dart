@@ -597,7 +597,7 @@ Widget proofOfLegitimacy() {
     );
   }
 
-  Future<void> _handleSignUp() async {
+ Future<void> _handleSignUp() async {
   try {
     final userAuthProvider = context.read<UserAuthProvider>();
     final userProvider = context.read<UserProvider>();
@@ -614,12 +614,12 @@ Widget proofOfLegitimacy() {
         contactNumber!,
         addresses,
         accountType,
-        false,
+        // Set status based on account type
+        accountType == 2 ? true : false,
       );
 
       if (uid != null && !uid.contains("Error")) {
         if (accountType == 3 && files.isNotEmpty) {
-  
           AppUser userDetails = AppUser(
             email: email!,
             uid: uid,
@@ -628,6 +628,7 @@ Widget proofOfLegitimacy() {
             contactNumber: contactNumber!,
             addresses: addresses,
             accountType: accountType,
+            // Set status based on account type
             status: false,
           );
 
