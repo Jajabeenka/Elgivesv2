@@ -1,7 +1,6 @@
+import 'package:elgivesv2/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
-
 
 class DrawerWidget extends StatefulWidget {
   final String? text;
@@ -104,6 +103,13 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               }
             },
           ),
+          ListTile(
+            title: Text("Organization Profile", style: TextStyle(color: Color.fromARGB(255, 5, 12, 49))),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, "/orgProfile");
+            },
+          ),
 
           Divider(
             height: 1,
@@ -132,7 +138,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             ),
           ),
 
-             ListTile(
+          ListTile(
           title: const Text('Logout'),
           onTap: () {
             context.read<UserAuthProvider>().signOut();

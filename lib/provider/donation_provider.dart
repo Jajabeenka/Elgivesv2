@@ -31,7 +31,7 @@ class DonationProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // //delete friend from the datbase
+  //delete friend from the datbase
   // void deleteFriend(String id) async{
   //   // _friends.remove(friend);
   //   // notifyListeners();
@@ -39,6 +39,17 @@ class DonationProvider with ChangeNotifier {
   //   notifyListeners();
   // }
 
+  //edits info of a friend with the given index from the databse
+  // void editFriend(String nickname, String age, bool status, double happiness, String superpower, String motto, String id) async {
+  //   // Navigator.push(
+  //   //   context,
+  //   //   MaterialPageRoute(
+  //   //     builder: (context) => EditPage(friend: friend)));
+  //   // _friends[index] = friend;
+  //   // notifyListeners();
+  //   await firebaseService.editTodo(nickname, age, status, happiness, superpower, motto, id);
+  //   notifyListeners();
+  // }
   // //edits info of a friend with the given index from the databse
   void editStatus(int donationId, String status) async {
     // Navigator.push(
