@@ -2,18 +2,32 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:elgivesv2/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+/// This class provides methods for authentication and user management using Firebase Authentication and Cloud Firestore.
+
 class FirebaseAuthAPI {
+  /// Firebase Authentication instance.
   static final FirebaseAuth auth = FirebaseAuth.instance;
+
+  /// Cloud Firestore instance.
   static final FirebaseFirestore db = FirebaseFirestore.instance;
 
+  /// Retrieves the currently signed-in user.
+  ///
+  /// Returns `null` if no user is signed in.
   User? getUser() {
     return auth.currentUser;
   }
 
+  /// Provides a stream of changes to the authentication state.
+  ///
+  /// Returns a stream of [User] objects representing the current authentication state.
   Stream<User?> userSignedIn() {
     return auth.authStateChanges();
   }
 
+  /// Retrieves the approval status of the current user.
+  ///
+  /// Returns `true` if the user is approved, `false` if not approved, and `null` if the user is not signed in.
   Future<bool?> getUserApprovalStatus() async {
     User? user = getUser();
     if (user == null) {
@@ -33,18 +47,15 @@ class FirebaseAuthAPI {
     }
   }
 
+  /// Signs in a user with the provided email and password.
+  ///
+  /// Returns a success message if the sign-in is successful, otherwise returns an error message.
   Future<String?> signIn(String email, String password) async {
     try {
       await auth.signInWithEmailAndPassword(email: email, password: password);
       return "Successful!";
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'invalid-email') {
-        return e.message;
-      } else if (e.code == 'invalid-credential') {
-        return e.message;
-      } else if (e.code == 'wrong-password') {
-        return e.message;
-      } else if (e.code == 'user-not-found') {
+      if (e.code == 'invalid-email' || e.code == 'invalid-credential' || e.code == 'wrong-password' || e.code == 'user-not-found') {
         return e.message;
       } else {
         return "Failed at ${e.code}: ${e.message}";
@@ -52,6 +63,9 @@ class FirebaseAuthAPI {
     }
   }
 
+  /// Signs up a new user with the provided information.
+  ///
+  /// Returns the user's UID if the sign-up is successful, otherwise returns an error message.
   Future<String?> signUp(
       String email,
       String password,
@@ -86,10 +100,8 @@ class FirebaseAuthAPI {
           Map<String, dynamic> userData = newUser.toJson(newUser);
           await db.collection("users").doc(credential.user!.uid).set(userData);
           return credential.user!.uid;
-          // Now the user is successfully added to Firestore
         } on FirebaseException catch (e) {
           return "Error in Firestore: ${e.code}: ${e.message}";
-          // Handle Firestore error
         }
       } else {
         return "Error: User authentication failed.";
@@ -107,10 +119,12 @@ class FirebaseAuthAPI {
     return "Error";
   }
 
+  /// Fetches the email associated with a given username from Firestore.
+  ///
+  /// Returns the email address if the username is found, otherwise returns `null`.
   Future<String?> fetchEmail(String username) async {
     try {
-      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
-          .instance
+      QuerySnapshot<Map<String, dynamic>> snapshot = await db
           .collection('users')
           .where("username", isEqualTo: username)
           .get();
@@ -126,6 +140,9 @@ class FirebaseAuthAPI {
     }
   }
 
+  /// Checks if a username is unique in the Firestore database.
+  ///
+  /// Returns `true` if the username is unique, otherwise returns `false`.
   Future<bool> isUsernameUnique(String username) async {
     try {
       QuerySnapshot querySnapshot = await db
@@ -133,20 +150,19 @@ class FirebaseAuthAPI {
           .where('username', isEqualTo: username)
           .get();
 
-      // Logging the size of the query result
-      print('Query size: ${querySnapshot.size}');
-
       if (querySnapshot.size == 0) {
         return true;
       }
       return false;
     } catch (e) {
-      // Logging the error
       print('Error in isUsernameUnique: $e');
       return false;
     }
   }
 
+  /// Signs out the current user.
+  ///
+  /// This method clears the authentication state.
   Future<void> signOut() async {
     await auth.signOut();
   }
