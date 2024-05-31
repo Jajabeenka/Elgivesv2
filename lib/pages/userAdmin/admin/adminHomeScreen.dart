@@ -1,5 +1,6 @@
 import 'package:elgivesv2/pages/userAdmin/admin/adminApprovalPage.dart';
 import 'package:elgivesv2/pages/userAdmin/admin/admin_donors.dart';
+import 'package:elgivesv2/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -75,9 +76,8 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: Icon(Icons.logout),
               title: Text('Logout'),
               onTap: () {
-                // Handle logout logic here
-                Navigator.pop(context); // Close the drawer
-                // For example, you can navigate to a login screen or show a logout dialog
+                 context.read<UserAuthProvider>().signOut();
+            Navigator.pop(context);
               },
             ),
           ],
