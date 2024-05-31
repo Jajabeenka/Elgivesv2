@@ -22,6 +22,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final userAuthProvider = Provider.of<UserAuthProvider>(context, listen: false); 
     final brightness = _isDarkMode ? Brightness.dark : Brightness.light;
     final backgroundColor = _isDarkMode ? Colors.grey[900] : Colors.white;
     final foregroundColor = _isDarkMode ? Colors.white : Colors.black;
@@ -134,8 +135,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
              ListTile(
           title: const Text('Logout'),
           onTap: () {
-            context.read<UserAuthProvider>().signOut();
-            Navigator.pop(context);
+            userAuthProvider.signOut();
+            Navigator.popUntil(context, ModalRoute.withName('/'));
+            Navigator.pushNamed(context, "/");
           },
         ),
 

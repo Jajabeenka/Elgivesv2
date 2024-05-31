@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/organization.dart';
+import '../models/user.dart';
 import '../pages/donatePage.dart';
 import '../models/donation.dart';
+import '../providers/user_provider.dart';
 import '../slambook_widgets/drawer.dart';
 import 'package:provider/provider.dart';
 import '../provider/orgs_provider.dart';
@@ -17,13 +19,18 @@ class _OrgsPageState extends State<OrgsPage> {
   void initState() {
     super.initState();
     // Fetch organizations data here
-    Provider.of<OrganizationProvider>(context, listen: false).fetchOrganizationsList();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<UserProvider>(context, listen: false).fetchOrganizations();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    Stream<QuerySnapshot> donationsListStream =
-        context.watch<OrganizationProvider>().organization;
+    // Stream<QuerySnapshot> donationsListStream =
+    //     context.watch<OrganizationProvider>().organization;
+    final userProvider = Provider.of<UserProvider>(context);
+    final user = context.watch<UserProvider>();
+    final userId = user.selectedUser?.uid;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -38,8 +45,8 @@ class _OrgsPageState extends State<OrgsPage> {
       ),
       backgroundColor: Color(0xFFF5F5F5),
       drawer: DrawerWidget(),
-      body: StreamBuilder(
-        stream: donationsListStream,
+      body: StreamBuilder<List<AppUser>>(
+        stream: userProvider.orgStream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(
@@ -58,7 +65,7 @@ class _OrgsPageState extends State<OrgsPage> {
                 valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF01563F)),
               ),
             );
-          } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -92,6 +99,7 @@ class _OrgsPageState extends State<OrgsPage> {
               ),
             );
           }
+          final organizations = snapshot.data!;
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: GridView.builder(
@@ -101,11 +109,12 @@ class _OrgsPageState extends State<OrgsPage> {
                 crossAxisSpacing: 16,
                 childAspectRatio: 0.8,
               ),
-              itemCount: snapshot.data?.docs.length,
+              itemCount: organizations.length,
               itemBuilder: (context, index) {
-                Organization org = Organization.fromJson(
-                    snapshot.data?.docs[index].data() as Map<String, dynamic>);
-                var id = snapshot.data?.docs[index].id;
+                final org = organizations[index];
+                // Organization org = Organization.fromJson(
+                //     snapshot.data?.docs[index].data() as Map<String, dynamic>);
+                // var id = snapshot.data?.docs[index].id;
                 return InkWell(
                   onTap: () {
                     Navigator.push(
@@ -113,8 +122,10 @@ class _OrgsPageState extends State<OrgsPage> {
                       MaterialPageRoute(
                         builder: (context) => FormSample(
                           orgName: org.name,
-                          orgDescri: org.description,
+                          orgDescri: "This is an org",
                           orgStatus: org.status,
+                          orgId: org.uid,
+                          userId: "dnwuibdw",
                         ),
                       ),
                     );

@@ -32,11 +32,15 @@ class FormSample extends StatefulWidget {
   final String orgName;
   final String orgDescri;
   final bool orgStatus;
+  final String orgId;
+  final String userId;
 
   const FormSample({
     required this.orgName,
     required this.orgDescri,
     required this.orgStatus,
+    required this.orgId,
+    required this.userId,
     Key? key,
   }) : super(key: key);
 
@@ -186,11 +190,15 @@ Future<void> _captureandSavePng() async {
 
 
 
-int index = 1;
+
 Future<String> saveProfile() async{
-  String resp = await StoreData().saveData(file: _image!, index: index);
-  index++;
-  return resp;
+  String? photoUrl;
+  if (_image != null) {
+    int index = generateUniqueId();
+    photoUrl = await StoreData().saveData(file: _image!, index: index);
+    // index++;
+  }
+  return photoUrl ?? '';
 }
 
 String? getUserId() {
@@ -499,8 +507,9 @@ String? getUserId() {
                               addresses: addresses,
                               contactNumber: contact,
                               status: "Pending",
-                              userId: "ndowdbnowdb",
+                              userId: widget.userId,
                               donationId: donationId,
+                              orgId: widget.orgId,
                             );
                             setState(() {
                               showText = true;
