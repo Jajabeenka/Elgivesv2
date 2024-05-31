@@ -1,142 +1,240 @@
-import 'package:elgivesv2/pages/userAdmin/organization_signup.dart';
-import 'package:elgivesv2/pages/userAdmin/signin_page.dart';
+import 'dart:async';
+import 'dart:io';
+
+import 'package:elgivesv2/models/user.dart';
+import 'package:elgivesv2/providers/auth_provider.dart';
+import 'package:elgivesv2/providers/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
-import '../../providers/auth_provider.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SignUpPage extends StatefulWidget {
-  const SignUpPage({Key? key});
+  const SignUpPage({super.key});
 
   @override
-  State<SignUpPage> createState() => _SignUpState();
+  State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _SignUpState extends State<SignUpPage> {
+class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
-  String? name;
-  String? username;
+  late List<File> files = [];
+
   String? email;
   String? password;
-  List<String>? addresses = []; // Change addresses to List<String>
+  String? username;
+  String? name;
   String? contactNumber;
+ 
+    List<String> addresses = ['']; // Initialize with a single address field
 
-  // RegExp: This is a class in Dart used for representing regular expressions.
+
+// 1 - Admin
+//2 - Donor
+// 3 - Organization
+
+  int accountType = 2; 
+  bool multipleAddressesEnabled = false;
+  bool _signUpPressed = false;
+  bool errorSignup = false;
+  String? errorSignupMessage;
+
   bool isValidEmail(String email) {
     return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
-  }
-
-  bool isValidPassword(String password) {
-    return RegExp(
-            r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{6,}$')
-        .hasMatch(password);
-  }
-
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 5),
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 141, 20, 54),
+      backgroundColor: Color(0xFF8D1436),
       appBar: AppBar(
         title: Text(
-          "Donor Sign Up Page",
+          "Sign Up Page",
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Color(0xFFFFC107),
           ),
         ),
-        iconTheme: IconThemeData(color: Color.fromARGB(255, 168, 202, 235)),
         backgroundColor: Color(0xFF01563F),
+        iconTheme: IconThemeData(color: Color(0xFF8D1436)),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          margin: const EdgeInsets.all(30),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                heading,
-                OrganizationSignUpButton,
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Color(0xFFFFC107),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    children: [
-                      nameField,
-                      userNameField,
-                      emailField,
-                      passwordField,
-                      addressField,
-                      contactNumberField,
-                    ],
-                  ),
-                ),
-                SizedBox(height: 26.0), // Spacing between icon and text
-                submitButton,
-                SizedBox(height: 15.0), // Spacing between icon and text
+      body: signUpBody(),
+    );
+  }
 
-                GoogleSignInButton(),
-                signInButton(),
-              ],
-            ),
-          ),
+  Widget signUpBody() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 30),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 15),
+            signInAs(),
+            const SizedBox(height: 15),
+            fillUpForm(),
+           
+            const SizedBox(height: 20),
+            signUpButton(),
+            const SizedBox(height: 15),
+            errorSignup
+                ? Center(
+                    child: Text(errorSignupMessage!,
+                        style: TextStyle(color: Colors.red)))
+                : Container(),
+            const SizedBox(height: 15),
+          ],
         ),
       ),
     );
   }
 
-  Widget get heading => Padding(
-        padding: const EdgeInsets.only(bottom: 0),
-        child: Text(
-          "Sign Up",
-          style: TextStyle(
-            fontSize: 40,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-      );
+Widget signInAs() {
+  return Column(
+    children: [
+      Text("Sign up as",
+          style: TextStyle(fontSize: 14, color: Color(0xFFFFC107))),
+      const SizedBox(height: 10),
+      LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.white, // Background color for the unselected state
+            ),
+            child: Stack(
+              children: [
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 100),
+                  width: constraints.maxWidth / 2,
+                  top: 0,
+                  bottom: 0,
+                  left: accountType == 2 ? 2 : constraints.maxWidth / 2,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFF01563F),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () {
+                          setState(() {
+                            accountType = 2;
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: Center(
+                            child: Text("Donor",
+                                style: TextStyle(
+                                    color: accountType == 2
+                                        ? Colors.white
+                                        : Color(0xFF01563F))),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () {
+                          setState(() {
+                            accountType = 3;
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: Center(
+                            child: Text("Organization",
+                                style: TextStyle(
+                                    color: accountType == 3
+                                        ? Colors.white
+                                        : Color(0xFF01563F))),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    ],
+  );
+}
 
-  Widget get nameField => Padding(
+
+  Widget fillUpForm() {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Color(0xFFFFC107),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          const SizedBox(height: 10),
+          emailField,
+          const SizedBox(height: 10),
+          nameField,
+          const SizedBox(height: 10),
+          userNameField,
+          const SizedBox(height: 10),
+          passwordField,
+          const SizedBox(height: 10),
+          contactNumberField,
+          const SizedBox(height: 10),
+       const SizedBox(height: 10),
+          ...addressFields(),
+          const SizedBox(height: 10),
+          addAnotherAddressButton(),
+           const SizedBox(height: 15),
+            accountType == 3 ? proofOfLegitimacy() : Container(),
+        ],
+      ),
+    );
+  }
+
+  Widget get emailField => Padding(
         padding: const EdgeInsets.only(bottom: 20),
         child: TextFormField(
           decoration: InputDecoration(
-            labelText: "Name",
-            hintText: "Enter your name",
+            filled: true,
+            fillColor: Colors.white,
+            labelText: "Email",
+            hintText: "juandelacruz09@gmail.com",
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.black54),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.black54),
+              borderSide: const BorderSide(color: Colors.black54),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.black),
+              borderSide: const BorderSide(color: Colors.black),
             ),
-            labelStyle: TextStyle(
+            labelStyle: const TextStyle(
               color: Colors.black,
             ),
-            filled: true,
-            fillColor: Colors.white,
           ),
-          onSaved: (value) => setState(() => name = value),
+          onSaved: (value) => setState(() => email = value),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return "Name cannot be empty";
+              return "Please enter your email";
+            } else if (!isValidEmail(value)) {
+              return "Please enter a valid email format";
             }
             return null;
           },
@@ -177,41 +275,6 @@ class _SignUpState extends State<SignUpPage> {
         ),
       );
 
-  Widget get emailField => Padding(
-        padding: const EdgeInsets.only(bottom: 20),
-        child: TextFormField(
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.white,
-            labelText: "Email",
-            hintText: "juandelacruz09@gmail.com",
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: Colors.black54),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: Colors.black),
-            ),
-            labelStyle: const TextStyle(
-              color: Colors.black,
-            ),
-          ),
-          onSaved: (value) => setState(() => email = value),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return "Please enter your email";
-            } else if (!isValidEmail(value)) {
-              return "Please enter a valid email format";
-            }
-            return null;
-          },
-        ),
-      );
-
   Widget get passwordField => Padding(
         padding: const EdgeInsets.only(bottom: 20),
         child: TextFormField(
@@ -242,6 +305,7 @@ class _SignUpState extends State<SignUpPage> {
             if (value == null ||
                 value.isEmpty ||
                 value.length < 6 ) {
+
               return "Password must be at least 6 characters and contain letters, numbers, and special characters.";
             }
             return null;
@@ -249,12 +313,12 @@ class _SignUpState extends State<SignUpPage> {
         ),
       );
 
-  Widget get addressField => Padding(
+  Widget get nameField => Padding(
         padding: const EdgeInsets.only(bottom: 20),
         child: TextFormField(
           decoration: InputDecoration(
-            labelText: "Address",
-            hintText: "Enter an address",
+            labelText: "Name",
+            hintText: "Enter your name",
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(color: Colors.black54),
@@ -273,16 +337,10 @@ class _SignUpState extends State<SignUpPage> {
             filled: true,
             fillColor: Colors.white,
           ),
-          onSaved: (value) {
-            if (value != null && value.isNotEmpty) {
-              setState(() {
-                addresses!.add(value); // Add address to the addresses list
-              });
-            }
-          },
+          onSaved: (value) => setState(() => name = value),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return "Address cannot be empty";
+              return "Name cannot be empty";
             }
             return null;
           },
@@ -293,8 +351,8 @@ class _SignUpState extends State<SignUpPage> {
         padding: const EdgeInsets.only(bottom: 20),
         child: TextFormField(
           decoration: InputDecoration(
-            labelText: "Contact Information",
-            hintText: "Enter phone number",
+            labelText: "Contact Number",
+            hintText: "Enter your number",
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(color: Colors.black54),
@@ -316,57 +374,98 @@ class _SignUpState extends State<SignUpPage> {
           onSaved: (value) => setState(() => contactNumber = value),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return "Contact number cannot be empty";
+              return "Number cannot be empty";
             }
             return null;
           },
         ),
       );
 
-  Widget get submitButton => ElevatedButton(
-        onPressed: () async {
-          if (_formKey.currentState!.validate()) {
-            _formKey.currentState!.save();
-            try {
-              await context.read<UserAuthProvider>().signUp(
-                    name!,
-                    username!,
-                    email!,
-                    password!,
-                    addresses!,
-                    contactNumber!,
-                  );
-              // Handle successful signup (navigate or show message)
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text("Sign-up successful!"),
-                  duration: const Duration(seconds: 2),
+
+
+   List<Widget> addressFields() {
+    List<Widget> addressWidgets = [];
+    for (int i = 0; i < addresses.length; i++) {
+      addressWidgets.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  initialValue: addresses[i],
+                  decoration: InputDecoration(
+                    labelText: "Address ${i + 1}",
+                    hintText: "Enter address",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.black54),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.black54),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.black),
+                    ),
+                    labelStyle: TextStyle(
+                      color: Colors.black,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                  onChanged: (value) {
+                    addresses[i] = value;
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Address cannot be empty";
+                    }
+                    return null;
+                  },
                 ),
-              );
-            } catch (e) {
-              // Handle signup errors
-              _showSnackBar("Sign-up failed: $e");
-            }
-          }
+              ),
+              if (i > 0)
+                IconButton(
+                  icon: Icon(Icons.remove_circle_outline, color: Colors.red),
+                  onPressed: () {
+                    setState(() {
+                      addresses.removeAt(i);
+                    });
+                  },
+                ),
+            ],
+          ),
+        ),
+      );
+    }
+    return addressWidgets;
+  }
+
+  Widget addAnotherAddressButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: ElevatedButton(
+        onPressed: () {
+          setState(() {
+            addresses.add('');
+          });
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFF01563F), // Button background color
-          textStyle: TextStyle(color: Colors.white), // Text color
+          backgroundColor: Color(0xFF01563F), // Background color
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0), // Rounded corners
+            borderRadius: BorderRadius.circular(10),
           ),
-          padding: EdgeInsets.symmetric(vertical: 12.0), // Button padding
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.login, // Add an icon if desired
-              color: Colors.white,
-            ),
-            SizedBox(width: 10.0), // Spacing between icon and text
+            Icon(Icons.add, color: Color(0xFFFFC107)),
+            SizedBox(width: 10),
             Text(
-              "Sign Up",
+              "Add Another Address",
               style: TextStyle(
                 color: Color(0xFFFFC107),
                 fontWeight: FontWeight.bold,
@@ -375,92 +474,184 @@ class _SignUpState extends State<SignUpPage> {
             ),
           ],
         ),
-      );
-
-  Widget get OrganizationSignUpButton => Padding(
-        padding: const EdgeInsets.all(0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text("Click to join here as an",
-                style: TextStyle(color: Colors.white)),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const OrganizationSignUpPage()),
-                );
-              },
-              child: const Text(
-                "organization",
-                style: TextStyle(
-                  color: Color(0xFFFFC107),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-
-  Widget GoogleSignInButton() => ElevatedButton(
-        onPressed: () async {},
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFF01563F), // Button background color
-          textStyle: TextStyle(color: Colors.white), // Text color
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0), // Rounded corners
-          ),
-          padding: EdgeInsets.symmetric(vertical: 12.0), // Button padding
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              color: Colors.white,
-              FontAwesomeIcons.google,
-            ),
-            SizedBox(width: 10.0), // Spacing between icon and text
-            Text(
-              "Sign in with Google",
-              style: TextStyle(
-                color: Color(0xFFFFC107),
-                fontWeight: FontWeight.bold,
-                fontSize: 16.0,
-              ),
-            ),
-          ],
-        ),
-      );
-
-  Widget signInButton() {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "Already have an account?",
-            style: TextStyle(color: Colors.white),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => SignInPage()),
-              );
-            },
-            child: Text(
-              "Sign In",
-              style: TextStyle(
-                color: Color(0xFFFFC107),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
+
+Widget proofOfLegitimacy() {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const SizedBox(height: 15),
+      Text("Proof of Legitimacy", style: TextStyle(color: Color(0xFF01563F), fontSize: 16, fontWeight: FontWeight.bold)),
+      const SizedBox(height: 10),
+      Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFF01563F)),
+        ),
+        padding: EdgeInsets.all(10),
+        child: Column(
+          children: [
+            for (int i = 0; i < files.length; i++)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(files[i].path.split('/').last, style: TextStyle(color: Colors.black)),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        setState(() {
+                          files.removeAt(i);
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            GestureDetector(
+              child: ElevatedButton.icon(
+                icon: Icon(Icons.arrow_upward_rounded, color: Colors.white),
+                label: Text("Upload", style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF01563F),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                ),
+                onPressed: () async {
+                  final filesResult = await FilePicker.platform.pickFiles(
+                    allowMultiple: true,
+                  );
+                  if (filesResult != null && filesResult.files.isNotEmpty) {
+                    for (var file in filesResult.files) {
+                      String fileName = file.path!.split('/').last;
+                      bool fileExists = files.any((existingFile) =>
+                          existingFile.path.split('/').last == fileName);
+                      if (!fileExists) {
+                        files.add(File(file.path!));
+                      }
+                    }
+                    setState(() {});
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
+}
+
+  Widget signUpButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: GestureDetector(
+        child: ElevatedButton(
+          onPressed: () async {
+            if (_formKey.currentState!.validate()) {
+              _formKey.currentState!.save();
+              setState(() {
+                _signUpPressed = true;
+              });
+              await _handleSignUp();
+              setState(() {
+                _signUpPressed = false;
+              });
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color(0xFF01563F), // Button background color
+            textStyle: TextStyle(color: Colors.white), // Text color
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0), // Rounded corners
+            ),
+            padding: EdgeInsets.symmetric(vertical: 12.0), // Button padding
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.login, // Add an icon if desired
+                color: Colors.white,
+              ),
+              SizedBox(width: 10.0), // Spacing between icon and text
+              Text(
+                "Sign Up",
+                style: TextStyle(
+                  color: Color(0xFFFFC107),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _handleSignUp() async {
+  try {
+    final userAuthProvider = context.read<UserAuthProvider>();
+    final userProvider = context.read<UserProvider>();
+
+    bool isUsernameUnique = await userAuthProvider.isUsernameUnique(username!);
+    print(isUsernameUnique);
+
+    if (isUsernameUnique) {
+      String? uid = await userAuthProvider.signUp(
+        email!,
+        password!,
+        username!,
+        name!,
+        contactNumber!,
+        addresses,
+        accountType,
+        false,
+      );
+
+      if (uid != null && !uid.contains("Error")) {
+        if (accountType == 3 && files.isNotEmpty) {
+  
+          AppUser userDetails = AppUser(
+            email: email!,
+            uid: uid,
+            username: username!,
+            name: name!,
+            contactNumber: contactNumber!,
+            addresses: addresses,
+            accountType: accountType,
+            status: false,
+          );
+
+          await userProvider.updateUser(uid, userDetails);
+        }
+
+        if (mounted) {
+          Navigator.pop(context);
+        }
+      } else {
+        setState(() {
+          errorSignup = true;
+          errorSignupMessage = uid ?? "Unknown error occurred";
+        });
+      }
+    } else {
+      setState(() {
+        errorSignup = true;
+        errorSignupMessage = "Username already exists!";
+      });
+    }
+  } catch (error) {
+    print("Error during sign up: $error");
+  }
+}
+
 }
