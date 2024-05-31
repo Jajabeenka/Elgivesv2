@@ -1,13 +1,10 @@
 import 'dart:async';
-
-
 import 'package:elgivesv2/api/firebase_auth_api.dart';
 import 'package:elgivesv2/api/firebase_user_api.dart';
 import 'package:elgivesv2/models/user.dart';
 import 'package:elgivesv2/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 
 class UserAuthProvider with ChangeNotifier {
   late FirebaseAuthAPI authService;
@@ -24,7 +21,6 @@ class UserAuthProvider with ChangeNotifier {
 
   void refresh() {
     _getAccountInfo();
-    getApprovalStatus();
   }
 
   Stream<User?> get userStream => _authStream;
@@ -36,7 +32,6 @@ class UserAuthProvider with ChangeNotifier {
     _authStream = authService.userSignedIn();
     notifyListeners();
 
-    _authStream = authService.userSignedIn();
     _authStream.listen((user) {
       refresh();
     });
@@ -48,9 +43,10 @@ class UserAuthProvider with ChangeNotifier {
   }
 
   String? _email;
+
   String? get email => _email;
 
-  Future<void> fetchEmail(username) async {
+  Future<void> fetchEmail(String username) async {
     _email = await authService.fetchEmail(username);
     notifyListeners();
   }
@@ -60,11 +56,7 @@ class UserAuthProvider with ChangeNotifier {
       return;
     }
     _accountInfo = await UserProvider().getAccountInfo(user!.uid);
-    notifyListeners();
-  }
-
-  Future<void> getApprovalStatus() async {
-    _userApprovalStatus = await authService.getUserApprovalStatus();
+    _userApprovalStatus = _accountInfo?.status;
     notifyListeners();
   }
 
@@ -83,10 +75,39 @@ class UserAuthProvider with ChangeNotifier {
     return uid;
   }
 
-  Future<String?> signIn(String email, String password) async {
-    String? message = await authService.signIn(email, password);
-    notifyListeners();
+  Future<String?> signInWithUsername(String username, String password) async {
+    // Fetch the email associated with the username
+    await fetchEmail(username);
+
+    if (_email == null) {
+      return "Username not found.";
+    }
+
+    // Attempt to sign in with the fetched email
+    String? message = await signIn(_email!, password);
+
     return message;
+  }
+
+  Future<String?> signIn(String email, String password) async {
+  
+
+      // Check approval status
+      if (_userApprovalStatus == true) {
+        return "Your account is not approved.";
+      }else{
+  // Attempt to sign in
+    String? message = await authService.signIn(email, password);
+
+    if (message != null) {
+      // Fetch user account info after successful sign-in
+      await _getAccountInfo();
+      }
+
+      notifyListeners();
+      return message;
+    }
+
   }
 
   Future<bool> isUsernameUnique(String username) async {
