@@ -10,7 +10,12 @@ class AddDrivePage extends StatelessWidget {
     return MaterialApp(
       title: 'Add Donation Drive',
       home: Scaffold(
-        appBar: AppBar(title: Text('Add Donation Drive'),),
+        appBar: AppBar(
+        title: const Text('Donation Drive', 
+              style: TextStyle(color: Colors.white),
+              ),
+        backgroundColor: const Color.fromARGB(255, 8, 64, 60),
+        ),
         body: Column (
           children: [
             Container(

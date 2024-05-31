@@ -1,3 +1,4 @@
+import 'package:elgivesv2/pages/addDrivePage.dart';
 import 'package:elgivesv2/pages/profilePage.dart';
 import 'package:elgivesv2/provider/donationDrive_provider.dart';
 import 'package:elgivesv2/provider/donor_provider.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
         '/donorProfile': (context) => ProfilePage(),
         '/orgProfile': (context) => OrgProfile(),
         '/donationDrive': (context) => DonationDrive(),
+        '/addDrivePage': (context) => AddDrivePage(),
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,

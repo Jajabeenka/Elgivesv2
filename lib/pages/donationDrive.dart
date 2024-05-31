@@ -116,13 +116,14 @@ class _DonationDriveState extends State<DonationDrive> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) => DonationDriveModal(
-              type: 'Add',
-              item: null,
-            ),
-          );
+          // showDialog(
+          //   context: context,
+          //   builder: (BuildContext context) => DonationDriveModal(
+          //     type: 'Add',
+          //     item: null,
+          //   ),
+          // );
+          Navigator.pushNamed(context, '/addDrivePage');
         },
         child: const Icon(Icons.add_outlined),
       ),
