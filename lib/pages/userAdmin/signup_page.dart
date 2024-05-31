@@ -23,16 +23,16 @@ class _SignUpPageState extends State<SignUpPage> {
   String? password;
   String? username;
   String? name;
+  String? description;
   String? contactNumber;
- 
-    List<String> addresses = ['']; // Initialize with a single address field
 
+  List<String> addresses = ['']; // Initialize with a single address field
 
 // 1 - Admin
 //2 - Donor
 // 3 - Organization
 
-  int accountType = 2; 
+  int accountType = 2;
   bool multipleAddressesEnabled = false;
   bool _signUpPressed = false;
   bool errorSignup = false;
@@ -73,7 +73,6 @@ class _SignUpPageState extends State<SignUpPage> {
             signInAs(),
             const SizedBox(height: 15),
             fillUpForm(),
-           
             const SizedBox(height: 20),
             signUpButton(),
             const SizedBox(height: 15),
@@ -89,91 +88,91 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-Widget signInAs() {
-  return Column(
-    children: [
-      Text("Sign up as",
-          style: TextStyle(fontSize: 14, color: Color(0xFFFFC107))),
-      const SizedBox(height: 10),
-      LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          return Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Colors.white, // Background color for the unselected state
-            ),
-            child: Stack(
-              children: [
-                AnimatedPositioned(
-                  duration: const Duration(milliseconds: 100),
-                  width: constraints.maxWidth / 2,
-                  top: 0,
-                  bottom: 0,
-                  left: accountType == 2 ? 2 : constraints.maxWidth / 2,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Color(0xFF01563F),
-                      borderRadius: BorderRadius.circular(20),
+  Widget signInAs() {
+    return Column(
+      children: [
+        Text("Sign up as",
+            style: TextStyle(fontSize: 14, color: Color(0xFFFFC107))),
+        const SizedBox(height: 10),
+        LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            return Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color:
+                    Colors.white, // Background color for the unselected state
+              ),
+              child: Stack(
+                children: [
+                  AnimatedPositioned(
+                    duration: const Duration(milliseconds: 100),
+                    width: constraints.maxWidth / 2,
+                    top: 0,
+                    bottom: 0,
+                    left: accountType == 2 ? 2 : constraints.maxWidth / 2,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Color(0xFF01563F),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        onTap: () {
-                          setState(() {
-                            accountType = 2;
-                          });
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: Center(
-                            child: Text("Donor",
-                                style: TextStyle(
-                                    color: accountType == 2
-                                        ? Colors.white
-                                        : Color(0xFF01563F))),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () {
+                            setState(() {
+                              accountType = 2;
+                            });
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: Center(
+                              child: Text("Donor",
+                                  style: TextStyle(
+                                      color: accountType == 2
+                                          ? Colors.white
+                                          : Color(0xFF01563F))),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.translucent,
-                        onTap: () {
-                          setState(() {
-                            accountType = 3;
-                          });
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: Center(
-                            child: Text("Organization",
-                                style: TextStyle(
-                                    color: accountType == 3
-                                        ? Colors.white
-                                        : Color(0xFF01563F))),
+                      Expanded(
+                        flex: 1,
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: () {
+                            setState(() {
+                              accountType = 3;
+                            });
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: Center(
+                              child: Text("Organization",
+                                  style: TextStyle(
+                                      color: accountType == 3
+                                          ? Colors.white
+                                          : Color(0xFF01563F))),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    ],
-  );
-}
-
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
 
   Widget fillUpForm() {
     return Container(
@@ -195,12 +194,14 @@ Widget signInAs() {
           const SizedBox(height: 10),
           contactNumberField,
           const SizedBox(height: 10),
-       const SizedBox(height: 10),
+          const SizedBox(height: 10),
           ...addressFields(),
           const SizedBox(height: 10),
           addAnotherAddressButton(),
-           const SizedBox(height: 15),
-            accountType == 3 ? proofOfLegitimacy() : Container(),
+          const SizedBox(height: 15),
+          accountType == 3 ? proofOfLegitimacy() : Container(),
+          const SizedBox(height: 15),
+          accountType == 3 ? descriptionField() : Container(),
         ],
       ),
     );
@@ -381,9 +382,7 @@ Widget signInAs() {
         ),
       );
 
-
-
-   List<Widget> addressFields() {
+  List<Widget> addressFields() {
     List<Widget> addressWidgets = [];
     for (int i = 0; i < addresses.length; i++) {
       addressWidgets.add(
@@ -478,76 +477,117 @@ Widget signInAs() {
     );
   }
 
-Widget proofOfLegitimacy() {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const SizedBox(height: 15),
-      Text("Proof of Legitimacy", style: TextStyle(color: Color(0xFF01563F), fontSize: 16, fontWeight: FontWeight.bold)),
-      const SizedBox(height: 10),
-      Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Color(0xFF01563F)),
-        ),
-        padding: EdgeInsets.all(10),
-        child: Column(
-          children: [
-            for (int i = 0; i < files.length; i++)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(files[i].path.split('/').last, style: TextStyle(color: Colors.black)),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.delete, color: Colors.red),
-                      onPressed: () {
-                        setState(() {
-                          files.removeAt(i);
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            GestureDetector(
-              child: ElevatedButton.icon(
-                icon: Icon(Icons.arrow_upward_rounded, color: Colors.white),
-                label: Text("Upload", style: TextStyle(color: Colors.white)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF01563F),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+  Widget proofOfLegitimacy() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 15),
+        Text("Proof of Legitimacy",
+            style: TextStyle(
+                color: Color(0xFF01563F),
+                fontSize: 16,
+                fontWeight: FontWeight.bold)),
+        const SizedBox(height: 10),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Color(0xFF01563F)),
+          ),
+          padding: EdgeInsets.all(10),
+          child: Column(
+            children: [
+              for (int i = 0; i < files.length; i++)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(files[i].path.split('/').last,
+                            style: TextStyle(color: Colors.black)),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          setState(() {
+                            files.removeAt(i);
+                          });
+                        },
+                      ),
+                    ],
                   ),
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                 ),
-                onPressed: () async {
-                  final filesResult = await FilePicker.platform.pickFiles(
-                    allowMultiple: true,
-                  );
-                  if (filesResult != null && filesResult.files.isNotEmpty) {
-                    for (var file in filesResult.files) {
-                      String fileName = file.path!.split('/').last;
-                      bool fileExists = files.any((existingFile) =>
-                          existingFile.path.split('/').last == fileName);
-                      if (!fileExists) {
-                        files.add(File(file.path!));
+              GestureDetector(
+                child: ElevatedButton.icon(
+                  icon: Icon(Icons.arrow_upward_rounded, color: Colors.white),
+                  label: Text("Upload", style: TextStyle(color: Colors.white)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF01563F),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  ),
+                  onPressed: () async {
+                    final filesResult = await FilePicker.platform.pickFiles(
+                      allowMultiple: true,
+                    );
+                    if (filesResult != null && filesResult.files.isNotEmpty) {
+                      for (var file in filesResult.files) {
+                        String fileName = file.path!.split('/').last;
+                        bool fileExists = files.any((existingFile) =>
+                            existingFile.path.split('/').last == fileName);
+                        if (!fileExists) {
+                          files.add(File(file.path!));
+                        }
                       }
+                      setState(() {});
                     }
-                    setState(() {});
-                  }
-                },
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+      ],
+    );
+  }
+
+  Widget descriptionField() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: TextFormField(
+        decoration: InputDecoration(
+          labelText: "Organization Description",
+          hintText: "Enter your description",
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.black54),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.black54),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.black),
+          ),
+          labelStyle: TextStyle(
+            color: Colors.black,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+        ),
+        onSaved: (value) => setState(() => description = value),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return "Description cannot be empty";
+          }
+          return null;
+        },
       ),
-    ],
-  );
-}
+    );
+  }
 
   Widget signUpButton() {
     return Padding(
@@ -598,60 +638,63 @@ Widget proofOfLegitimacy() {
   }
 
   Future<void> _handleSignUp() async {
-  try {
-    final userAuthProvider = context.read<UserAuthProvider>();
-    final userProvider = context.read<UserProvider>();
+    try {
+      final userAuthProvider = context.read<UserAuthProvider>();
+      final userProvider = context.read<UserProvider>();
 
-    bool isUsernameUnique = await userAuthProvider.isUsernameUnique(username!);
-    print(isUsernameUnique);
+      bool isUsernameUnique =
+          await userAuthProvider.isUsernameUnique(username!);
+      print(isUsernameUnique);
 
-    if (isUsernameUnique) {
-      String? uid = await userAuthProvider.signUp(
-        email!,
-        password!,
-        username!,
-        name!,
-        contactNumber!,
-        addresses,
-        accountType,
-        false,
-      );
+      if (isUsernameUnique) {
+        String? uid = await userAuthProvider.signUp(
+          email!,
+          password!,
+          username!,
+          name!,
+          contactNumber!,
+          description!,
+          addresses,
+          accountType,
+          // Set status based on account type
+          accountType == 2 ? true : false,
+        );
 
-      if (uid != null && !uid.contains("Error")) {
-        if (accountType == 3 && files.isNotEmpty) {
-  
-          AppUser userDetails = AppUser(
-            email: email!,
-            uid: uid,
-            username: username!,
-            name: name!,
-            contactNumber: contactNumber!,
-            addresses: addresses,
-            accountType: accountType,
-            status: false,
-          );
+        if (uid != null && !uid.contains("Error")) {
+          if (accountType == 3 && files.isNotEmpty) {
+            AppUser userDetails = AppUser(
+              email: email!,
+              uid: uid,
+              username: username!,
+              name: name!,
+              contactNumber: contactNumber!,
+              description: description!,
+              addresses: addresses,
+              accountType: accountType,
+              // Set status based on account type
+              status: false,
+            );
 
-          await userProvider.updateUser(uid, userDetails);
-        }
+            await userProvider.updateUser(uid, userDetails);
+          }
 
-        if (mounted) {
-          Navigator.pop(context);
+          if (mounted) {
+            Navigator.pop(context);
+          }
+        } else {
+          setState(() {
+            errorSignup = true;
+            errorSignupMessage = uid ?? "Unknown error occurred";
+          });
         }
       } else {
         setState(() {
           errorSignup = true;
-          errorSignupMessage = uid ?? "Unknown error occurred";
+          errorSignupMessage = "Username already exists!";
         });
       }
-    } else {
-      setState(() {
-        errorSignup = true;
-        errorSignupMessage = "Username already exists!";
-      });
+    } catch (error) {
+      print("Error during sign up: $error");
     }
-  } catch (error) {
-    print("Error during sign up: $error");
   }
-}
-
 }

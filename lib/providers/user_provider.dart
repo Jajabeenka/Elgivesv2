@@ -1,7 +1,6 @@
-import 'dart:async';
+import 'package:elgivesv2/api/firebase_user_api.dart';
 import 'package:elgivesv2/models/user.dart';
-import 'package:flutter/material.dart';
-import '../api/firebase_user_api.dart';
+import 'package:flutter/foundation.dart';
 
 /// A provider class that manages user data and interaction with Firebase.
 class UserProvider with ChangeNotifier {
@@ -94,7 +93,7 @@ class UserProvider with ChangeNotifier {
 
   /// Fetches donors from the database.
   void fetchDonors() {
-    _fetchUsersByType(donorAccount, false);
+    _fetchUsersByType(donorAccount, true);
   }
 
   /// Fetches approved organizations from the database.
