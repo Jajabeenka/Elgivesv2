@@ -1,7 +1,7 @@
 
 import 'package:elgivesv2/pages/profilePage.dart';
 import 'package:elgivesv2/pages/userAdmin/admin/adminApprovalPage.dart';
-import 'package:elgivesv2/pages/userAdmin/admin/admin_donors.dart';
+import 'package:elgivesv2/pages/userAdmin/admin/adminDonors.dart';
 import 'package:elgivesv2/provider/donor_provider.dart';
 import 'package:elgivesv2/providers/user_provider.dart';
 import 'package:flutter/material.dart';

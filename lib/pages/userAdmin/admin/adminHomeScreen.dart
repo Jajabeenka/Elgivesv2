@@ -1,5 +1,6 @@
 import 'package:elgivesv2/pages/userAdmin/admin/adminApprovalPage.dart';
-import 'package:elgivesv2/pages/userAdmin/admin/admin_donors.dart';
+import 'package:elgivesv2/pages/userAdmin/admin/adminDonors.dart';
+import 'package:elgivesv2/pages/userAdmin/admin/adminOrganizations.dart';
 import 'package:elgivesv2/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   static  List<Widget> _widgetOptions = <Widget>[
     DonorListWidget(),
+    OrganizationListWidget(),
     adminApproval(),
   ];
 
@@ -46,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: const Color(0xFF01563F),
               ),
               child: Text(
                 'Navigation Menu',
@@ -64,11 +66,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.pop(context); // Close the drawer
               },
             ),
+             ListTile(
+              leading: Icon(Icons.business),
+              title: Text('Organizations'), // Add organizations option here
+              onTap: () {
+                _onItemTapped(1);
+                Navigator.pop(context); // Close the drawer
+              },
+            ),
             ListTile(
               leading: Icon(Icons.approval),
               title: Text('Admin Approval'),
               onTap: () {
-                _onItemTapped(1);
+                _onItemTapped(2);
                 Navigator.pop(context); // Close the drawer
               },
             ),
