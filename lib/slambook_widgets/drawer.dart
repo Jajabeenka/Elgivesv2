@@ -135,9 +135,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
              ListTile(
           title: const Text('Logout'),
           onTap: () {
-            userAuthProvider.signOut();
-            Navigator.popUntil(context, ModalRoute.withName('/'));
-            Navigator.pushNamed(context, "/");
+            context.read<UserAuthProvider>().signOut();
+            Navigator.pop(context);
           },
         ),
 

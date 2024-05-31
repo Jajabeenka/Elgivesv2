@@ -93,7 +93,7 @@ class UserAuthProvider with ChangeNotifier {
   
 
       // Check approval status
-      if (_userApprovalStatus == true) {
+      if (_userApprovalStatus == false) {
         return "Your account is not approved.";
       }else{
   // Attempt to sign in
