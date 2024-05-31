@@ -1,5 +1,4 @@
 import 'package:elgivesv2/models/user.dart';
-import 'package:elgivesv2/pages/userAdmin/admin/adminDrawer.dart';
 import 'package:elgivesv2/pages/userAdmin/admin/organizationDetailsPage.dart';
 import 'package:elgivesv2/providers/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -25,18 +24,7 @@ class _PendingOrganizationHomeState extends State<adminApproval> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF8D1436),
-      drawer: AdminDrawerWidget(),
-      appBar: AppBar(
-        title: const Text(
-          "Pending Organizations",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Color(0xFFFFC107),
-          ),
-        ),
-        backgroundColor: const Color(0xFF01563F),
-        iconTheme: const IconThemeData(color: Color(0xFF8D1436)),
-      ),
+     
       body: Consumer<UserProvider>(
         builder: (context, userProvider, child) {
           return StreamBuilder<List<AppUser>>(
