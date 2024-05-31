@@ -42,6 +42,8 @@ class UserAuthProvider with ChangeNotifier {
     });
   }
 
+  User? get certainUser => authService.getUser();
+  
   String? _email;
 
   String? get email => _email;
@@ -55,7 +57,8 @@ class UserAuthProvider with ChangeNotifier {
     if (user == null) {
       return;
     }
-    _accountInfo = await UserProvider().getAccountInfo(user!.uid);
+    String uid = user!.uid; // Get the uid of the currently logged-in user
+    _accountInfo = await UserProvider().getAccountInfo(uid);
     _userApprovalStatus = _accountInfo?.status;
     notifyListeners();
   }
