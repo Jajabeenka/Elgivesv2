@@ -1,6 +1,7 @@
 
 import 'package:elgivesv2/models/user.dart';
-import 'package:elgivesv2/pages/orgsPage.dart';
+import 'package:elgivesv2/pages/donor/orgsPage.dart';
+import 'package:elgivesv2/pages/organization/organizationHomeScreen.dart';
 import 'package:elgivesv2/pages/userAdmin/admin/adminApprovalPage.dart';
 import 'package:elgivesv2/pages/userAdmin/admin/adminHomeScreen.dart';
 import 'package:elgivesv2/pages/userAdmin/admin/adminDonors.dart';
@@ -40,7 +41,7 @@ class _HomePageState extends State<HomePage> {
      if (user!.accountType == 1){
             return   HomeScreen();
           } else if (user!.accountType == 3){
-            return  OrgsPage();
+            return  OrganizationHomeScreen();
           } else {
             return  OrgsPage();
           }

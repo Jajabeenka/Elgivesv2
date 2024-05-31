@@ -1,7 +1,7 @@
-import 'package:elgivesv2/pages/addDrivePage.dart';
-import 'package:elgivesv2/pages/donationDrive.dart';
-import 'package:elgivesv2/pages/orgProfile.dart';
-import 'package:elgivesv2/pages/profilePage.dart';
+import 'package:elgivesv2/pages/organization/addDrivePage.dart';
+import 'package:elgivesv2/pages/organization/donationDrive.dart';
+import 'package:elgivesv2/pages/organization/orgProfile.dart';
+import 'package:elgivesv2/pages/donor/profilePage.dart';
 import 'package:elgivesv2/pages/userAdmin/admin/adminApprovalPage.dart';
 import 'package:elgivesv2/pages/userAdmin/admin/adminDonors.dart';
 import 'package:elgivesv2/provider/donationDrive_provider.dart';
@@ -11,7 +11,7 @@ import 'package:elgivesv2/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import '../pages/orgsPage.dart';
+import 'pages/donor/orgsPage.dart';
 import '../provider/orgs_provider.dart';
 import 'firebase_options.dart';
 import 'provider/donation_provider.dart';
@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'EWAN Q PA',
-      initialRoute: '/',
+      initialRoute: '/addDrivePage',
       routes: {
         '/': (context) => const SplashScreen(),
         '/organizations': (context) => OrgsPage(),

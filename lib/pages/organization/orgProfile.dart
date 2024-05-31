@@ -1,25 +1,58 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import '../../slambook_widgets/drawer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../models/drive.dart';
+import '../../provider/donationDrive_provider.dart';
+import '../../api/firebase_auth_api.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../providers/auth_provider.dart';
 import 'package:provider/provider.dart';
-import '../models/donor.dart';
-import '../models/donation.dart';
-import '../models/user.dart';
-import '../provider/donation_provider.dart';
-import '../provider/donor_provider.dart';
-import '../providers/auth_provider.dart';
-import '../providers/user_provider.dart'; 
-import '../slambook_widgets/donations.dart';
-import '../slambook_widgets/drawer.dart';
-import '../slambook_widgets/qr_scanner.dart';
+import '../../providers/user_provider.dart';
+import '../../slambook_widgets/drive.dart';
+import '../../slambook_widgets/qr_scanner.dart';
 
-class ProfilePage extends StatelessWidget {
+class OrgProfile extends StatefulWidget {
+  @override
+  _OrgProfileState createState() => _OrgProfileState();
+}
+
+class _OrgProfileState extends State<OrgProfile> {
+  void initState() {
+    super.initState();
+    // Fetch organizations data here
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final driveProvider =
+          Provider.of<DonationDriveProvider>(context, listen: false);
+      driveProvider.fetchDonationDriveList();
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      userProvider.fetchOrganizations();
+      userProvider.fetchDonors();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Stream<QuerySnapshot> donorsListStream = context.watch<DonorProvider>().donor;
-    Stream<QuerySnapshot> donationsListStream =
-        context.watch<DonationProvider>().donation;
+    // Stream<QuerySnapshot> donationDriveListStream =
+    //     context.watch<DonationDriveProvider>().drive;
 
+    // String? getUserId() {
+    //   User? user = context.read<UserAuthProvider>().user;
+    //   if (user != null) {
+    //     return user.uid;
+    //   }
+    //   return null;
+    // }
+
+    // User? user = FirebaseAuth.instance.currentUser;
+
+    // // Check if the user is signed in
+    // if (user != null) {
+    //   String uid = user.uid; // <-- User ID
+    //   String? email = user.email; // <-- Their email
+    // }
+    Stream<QuerySnapshot> donationDriveStream =
+        context.watch<DonationDriveProvider>().drive;
     String? getUserId() {
       User? user = context.read<UserAuthProvider>().user;
       if (user != null) {
@@ -29,14 +62,12 @@ class ProfilePage extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Profile'),
-        elevation: 0,
-        backgroundColor: Color(0xFF01563F),
-        foregroundColor: Color(0xFFFFC107),
-      ),
-      extendBodyBehindAppBar: true,
-      drawer: DrawerWidget(),
+      // appBar: AppBar(
+      //   title: const Text('Organization Profile',
+      //         style: TextStyle(color: Colors.white),
+      //         ),
+      //   backgroundColor: const Color.fromARGB(255, 8, 64, 60),
+      // ),
       body: Stack(
         children: [
           Container(
@@ -53,7 +84,9 @@ class ProfilePage extends StatelessWidget {
             ),
           ),
           StreamBuilder(
-            stream: context.watch<UserProvider>().donorStream, // Use the donorStream from UserProvider
+            stream: context
+                .watch<UserProvider>()
+                .orgStream, // Use the donorStream from UserProvider
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return Center(
@@ -69,8 +102,8 @@ class ProfilePage extends StatelessWidget {
                 );
               }
 
-              final donor = snapshot.data!.firstWhere(
-                  (user) => user.uid == getUserId());
+              final org =
+                  snapshot.data!.firstWhere((user) => user.uid == getUserId());
 
               return SingleChildScrollView(
                 child: Padding(
@@ -106,7 +139,7 @@ class ProfilePage extends StatelessWidget {
                       ),
                       SizedBox(height: 16),
                       Text(
-                        donor.name,
+                        org.name,
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -115,10 +148,29 @@ class ProfilePage extends StatelessWidget {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        '@${donor.username}',
+                        '@${org.username}',
                         style: TextStyle(
                           fontSize: 16,
                           color: const Color.fromARGB(255, 0, 0, 0),
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 6.0, horizontal: 12.0),
+                        decoration: BoxDecoration(
+                          color: org.status
+                              ? Colors.green.shade700
+                              : Colors.red.shade700,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          org.status ? 'OPEN' : 'CLOSED',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                       SizedBox(height: 32),
@@ -148,11 +200,13 @@ class ProfilePage extends StatelessWidget {
                                 ),
                               ),
                               SizedBox(height: 8),
-                              ...donor.addresses.map(
+                              ...org.addresses.map(
                                 (address) => Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 4.0),
                                   child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Icon(
                                         Icons.location_on,
@@ -188,7 +242,7 @@ class ProfilePage extends StatelessWidget {
                                   ),
                                   SizedBox(width: 8),
                                   Text(
-                                    donor.contactNumber,
+                                    org.contactNumber,
                                     style: TextStyle(fontSize: 16),
                                   ),
                                 ],
@@ -199,14 +253,14 @@ class ProfilePage extends StatelessWidget {
                       ),
                       SizedBox(height: 32),
                       StreamBuilder(
-                        stream: donationsListStream,
+                        stream: donationDriveStream,
                         // .where((donation) =>
                         //     donation.data()['userId'] == getUserId()),
                         builder: (context, snapshot) {
                           if (snapshot.hasError) {
                             return Center(
-                              child: Text(
-                                  "Error encountered! ${snapshot.error}"),
+                              child:
+                                  Text("Error encountered! ${snapshot.error}"),
                             );
                           } else if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -224,15 +278,14 @@ class ProfilePage extends StatelessWidget {
                             physics: NeverScrollableScrollPhysics(),
                             itemCount: snapshot.data?.docs.length,
                             itemBuilder: (context, index) {
-                              Donation donation = Donation.fromJson(
+                              Drive drive = Drive.fromJson(
                                   snapshot.data?.docs[index].data()
                                       as Map<String, dynamic>);
-                                    if(donation.userId == getUserId())
-                                    {
-                                      return DonationWidget(donation: donation);
-                                    }
-                                    else {
-                                      return const SizedBox.shrink();}
+                              if (drive.orgId == getUserId()) {
+                                return DriveWidget(drive: drive);
+                              } else {
+                                return const SizedBox.shrink();
+                              }
                             },
                           );
                         },
@@ -245,7 +298,7 @@ class ProfilePage extends StatelessWidget {
           ),
           Positioned(
             bottom: 16.0,
-            right: 16.0,
+            right: 165.0,
             child: FloatingActionButton(
               onPressed: () {
                 Navigator.push(
@@ -256,8 +309,44 @@ class ProfilePage extends StatelessWidget {
               child: Icon(Icons.qr_code_scanner),
             ),
           ),
+          Container(
+            margin: const EdgeInsets.all(6.0),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: 30.0,
+                    height: 30.0,
+                    child: FittedBox(
+                      child: FloatingActionButton(
+                        onPressed: null,
+                        child: Icon(Icons.arrow_back),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 30.0,
+                    height: 30.0,
+                    child: FittedBox(
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/donationDrive');
+                        },
+                        child: Icon(Icons.arrow_forward),
+                      ),
+                    ),
+                  ),
+                ]),
+          )
         ],
       ),
     );
   }
 }
+
+// child: ElevatedButton(
+//   child: const Text('Go to Second route'),
+//     onPressed: () {
+//     // Navigate to second route
+//     },
+//   ),

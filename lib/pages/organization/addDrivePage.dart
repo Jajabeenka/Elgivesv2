@@ -1,14 +1,16 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:elgivesv2/provider/donationDrive_provider.dart';
+import 'package:elgivesv2/slambook_widgets/checkbox_donations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
-import '../slambook_widgets/driveName.dart';
-import '../slambook_widgets/description.dart';
-import '../models/drive.dart';
+import '../../providers/auth_provider.dart';
+import '../../slambook_widgets/driveName.dart';
+import '../../slambook_widgets/description.dart';
+import '../../models/drive.dart';
 import 'package:provider/provider.dart';
-import '../provider/donationDrive_provider.dart';
-import '../slambook_widgets/drawer.dart';
+import '../../provider/donationDrive_provider.dart';
 // class AddDrivePage extends StatelessWidget {
 //   const AddDrivePage({super.key});
 
@@ -110,6 +112,15 @@ class _AddDrivePageState extends State<AddDrivePage> {
 
   @override
   Widget build(BuildContext context) {
+
+    String? getUserId() {
+      User? user = context.read<UserAuthProvider>().user;
+      if (user != null) {
+        return user.uid;
+      }
+      return null;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Drive', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFFFC107),)),
@@ -117,7 +128,6 @@ class _AddDrivePageState extends State<AddDrivePage> {
         iconTheme: IconThemeData(color: Color(0xFF8D1436)),
       ),
       backgroundColor: Color(0xFF8D1436),
-      drawer: DrawerWidget(),
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -153,6 +163,7 @@ class _AddDrivePageState extends State<AddDrivePage> {
                   description = value;
                 });
               }),
+              CheckboxDrive(),
               SizedBox(height: 20,),
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.85,
@@ -168,6 +179,7 @@ class _AddDrivePageState extends State<AddDrivePage> {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState?.save();
                       Drive drive = Drive(
+                        orgId: getUserId(),
                         driveId: driveId, 
                         driveName: driveName,
                         description: description

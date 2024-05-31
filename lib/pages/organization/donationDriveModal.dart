@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/drive.dart';
-import '../provider/donationDrive_provider.dart';
+import '../../models/drive.dart';
+import '../../provider/donationDrive_provider.dart';
 import 'dart:math';
 
 class DonationDriveModal extends StatelessWidget {

@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import '../slambook_widgets/drawer.dart';
+import '../../slambook_widgets/drawer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../models/drive.dart';
+import '../../provider/donationDrive_provider.dart';
+import '../../api/firebase_auth_api.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../providers/auth_provider.dart';
+import 'package:provider/provider.dart';
+import '../../providers/user_provider.dart';
 
 class OrgProfile extends StatelessWidget {
 
@@ -8,6 +16,26 @@ class OrgProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    // Stream<QuerySnapshot> donationDriveListStream =
+    //     context.watch<DonationDriveProvider>().drive;
+
+    // String? getUserId() {
+    //   User? user = context.read<UserAuthProvider>().user;
+    //   if (user != null) {
+    //     return user.uid;
+    //   }
+    //   return null;
+    // }
+
+    // User? user = FirebaseAuth.instance.currentUser;
+
+    // // Check if the user is signed in
+    // if (user != null) {
+    //   String uid = user.uid; // <-- User ID
+    //   String? email = user.email; // <-- Their email
+    // }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Organization Profile', 
@@ -15,13 +43,32 @@ class OrgProfile extends StatelessWidget {
               ),
         backgroundColor: const Color.fromARGB(255, 8, 64, 60),
       ),
-      drawer: DrawerWidget(),
       body: Container(
         decoration: const BoxDecoration(
           color: Color(0xFF9F1010),
         ),
         child: Column(
           children: [ 
+            // StreamBuilder(
+            //   stream: context.watch<UserProvider>().orgStream, // Use the donorStream from UserProvider
+            //   builder: (context, snapshot) {
+            //     if (snapshot.hasError) {
+            //       return Center(
+            //         child: Text("Error encountered! ${snapshot.error}"),
+            //       );
+            //     } else if (snapshot.connectionState == ConnectionState.waiting) {
+            //       return Center(
+            //         child: CircularProgressIndicator(),
+            //       );
+            //     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            //       return const Center(
+            //         child: Text("No Donor Found"),
+            //       );
+            //     }
+
+            //     final donor = snapshot.data!.firstWhere(
+            //         (user) => user.uid == getUserId());
+            // }),
             SingleChildScrollView(
               child: Container(
                 margin: const EdgeInsets.all(6.0),

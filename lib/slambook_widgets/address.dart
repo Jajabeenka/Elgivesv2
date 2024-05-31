@@ -1,17 +1,29 @@
 import 'package:flutter/material.dart';
 
 class Address extends StatefulWidget {
-  final Function(String) callback;
-  final FormFieldValidator<String>? validator; 
+  final List<String> userAddresses;
+  final Function(String?)? onChanged;
+  final String? initialValue;
 
-  const Address(this.callback, {Key? key, this.validator}) : super(key: key);
-  
+  const Address({
+    Key? key,
+    required this.userAddresses,
+    this.onChanged,
+    this.initialValue,
+  }) : super(key: key);
+
   @override
   State<Address> createState() => _AddressState();
 }
 
 class _AddressState extends State<Address> {
-  String address = '';
+  String? selectedAddress;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedAddress = widget.initialValue;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,58 +41,46 @@ class _AddressState extends State<Address> {
           ),
         ],
       ),
-      child: Column(
-        children: [
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          //   child: Text(
-          //     'Enter Address:',
-          //     style: TextStyle(
-          //       fontSize: 18,
-          //       fontWeight: FontWeight.bold,
-          //       color: Color(0xFF01563F),
-          //     ),
-          //   ),
-          // ),
-          SizedBox(height: 5),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-            child: TextFormField(
-              initialValue: address,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+        child: DropdownButtonFormField<String>(
+          value: selectedAddress,
+          onChanged: (String? newValue) {
+            setState(() {
+              selectedAddress = newValue;
+            });
+            if (widget.onChanged != null) {
+              widget.onChanged!(newValue);
+            }
+          },
+          items: widget.userAddresses.map<DropdownMenuItem<String>>((String address) {
+            return DropdownMenuItem<String>(
+              value: address,
+              child: Text(address),
+            );
+          }).toList(),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Color.fromARGB(80, 141, 20, 54),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(
+                color: Color(0xFF8D1436),
+                width: 2,
               ),
-              onChanged: (value) {
-                address = value;
-                widget.callback(address);
-              },
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Color.fromARGB(80, 141, 20, 54),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    color: Color(0xFF8D1436),
-                    width: 2,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    color: Color(0xFF8D1436),
-                    width: 2,
-                  ),
-                ),
-                labelText: "Address",
-                hintText: "Enter your Address",
-                hintStyle: TextStyle(color: Colors.grey),
-              ),
-              validator: widget.validator,
             ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(
+                color: Color(0xFF8D1436),
+                width: 2,
+              ),
+            ),
+            labelText: "Address",
+            hintText: "Select your Address",
+            hintStyle: TextStyle(color: Colors.grey),
           ),
-          SizedBox(height: 5),
-        ],
+        ),
       ),
     );
   }

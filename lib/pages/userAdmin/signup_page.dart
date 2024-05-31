@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:elgivesv2/models/user.dart';
@@ -8,6 +9,9 @@ import 'package:elgivesv2/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+
+import '../../provider/add_image.dart';
+import '../../slambook_widgets/utils.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -412,7 +416,6 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
           ),
           onSaved: (value) => setState(() => description = value),
-          
         ),
       );
 
@@ -478,20 +481,141 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Widget proofOfLegitimacy() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Proof of legitimacy",
-          style: TextStyle(fontSize: 14, color: Color(0xFF01563F)),
-        ),
-        const SizedBox(height: 10),
-        proofImages(),
-        const SizedBox(height: 10),
-        addProofButton(),
-      ],
-    );
+  Uint8List? _image;
+  // List<String> proof = [];
+  
+  int generateUniqueId() {
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final random = Random().nextInt(900) + 100; // Generate a random number between 100 and 999
+    return int.parse('${now}${random}');
   }
+
+  void selectImage() async{
+    Uint8List img = await pickImage(ImageSource.gallery);
+    setState(() {
+        _image = img;
+        _selectedImages.add(img);
+    });
+    String? photoUrl;
+    if (_image != null) {
+      int index = generateUniqueId();
+      photoUrl = await StoreData().saveData(file: _image!, index: index);
+      // index++;
+    }
+    else{
+      photoUrl='';
+    }
+    proof.add(photoUrl);
+  }
+  String? photoUrl;
+
+  Future<String> saveProfile() async{
+    String? photoUrl;
+    if (_image != null) {
+      int index = generateUniqueId();
+      photoUrl = await StoreData().saveData(file: _image!, index: index);
+      // index++;
+    }
+    return photoUrl ?? '';
+  }
+  
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const SizedBox(height: 15),
+      Text("Proof of Legitimacy", style: TextStyle(color: Color(0xFF01563F), fontSize: 16, fontWeight: FontWeight.bold)),
+      const SizedBox(height: 10),
+      
+      Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Color(0xFF01563F)),
+        ),
+        padding: EdgeInsets.all(10),
+        child: Column(
+          children: [
+            for (int i = 0; i < files.length; i++)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(files[i].path.split('/').last, style: TextStyle(color: Colors.black)),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        setState(() {
+                          files.removeAt(i);
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            GestureDetector(
+              child: ElevatedButton.icon(
+                icon: Icon(Icons.arrow_upward_rounded, color: Colors.white),
+                label: Text("Upload", style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF01563F),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                ),
+                onPressed: selectImage,
+                // proof.add(saveProfile());
+              ),
+            ),
+            const SizedBox(height: 10),
+        Text("Recently selected Image", style: TextStyle(color: Color(0xFF01563F), fontSize: 16, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 5),
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              width: 300,
+              height: 100,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: _selectedImages.isNotEmpty
+                    ? Image.memory(
+                        _selectedImages.last,  // Display the most recent image
+                        fit: BoxFit.cover,
+                        width: 300,
+                        height: 100,
+                      )
+                    : Center(
+                        child: Icon(
+                          Icons.person,
+                          color: Color(0xFFFFC107),
+                          size: 36,
+                        ),
+                      ),
+              ),
+            ),
+          ],
+        ),
+          ],
+        ),
+      ),
+    ],
+  );
+}
 
   Widget proofImages() {
     return _selectedImages.isEmpty
@@ -534,35 +658,35 @@ class _SignUpPageState extends State<SignUpPage> {
           );
   }
 
-  Widget addProofButton() {
-    return ElevatedButton(
-      onPressed: () async {
-        Uint8List? pickedImage = await pickImage();
-        if (pickedImage != null) {
-          setState(() {
-            _selectedImages.add(pickedImage);
-          });
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        foregroundColor: Color(0xFFFFC107),
-        backgroundColor: Color(0xFF01563F),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-      child: Text("Add proof"),
-    );
-  }
+  // Widget addProofButton() {
+  //   return ElevatedButton(
+  //     onPressed: () async {
+  //       Uint8List? pickedImage = await pickImage();
+  //       if (pickedImage != null) {
+  //         setState(() {
+  //           _selectedImages.add(pickedImage);
+  //         });
+  //       }
+  //     },
+  //     style: ElevatedButton.styleFrom(
+  //       foregroundColor: Color(0xFFFFC107),
+  //       backgroundColor: Color(0xFF01563F),
+  //       shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.circular(10),
+  //       ),
+  //     ),
+  //     child: Text("Add proof"),
+  //   );
+  // }
 
-  Future<Uint8List?> pickImage() async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      return await image.readAsBytes();
-    }
-    return null;
-  }
+  // Future<Uint8List?> pickImage() async {
+  //   final ImagePicker _picker = ImagePicker();
+  //   final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+  //   if (image != null) {
+  //     return await image.readAsBytes();
+  //   }
+  //   return null;
+  // }
 
   Widget signUpButton() {
     return Padding(
@@ -632,7 +756,7 @@ class _SignUpPageState extends State<SignUpPage> {
             accountType,
             // Set status based on account type
             accountType == 2 ? true : false,
-            description!,
+            '',
             proof);
 
         if (uid != null && !uid.contains("Error")) {

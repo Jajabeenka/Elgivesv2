@@ -2,6 +2,8 @@ import 'package:elgivesv2/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../pages/userAdmin/signin_page.dart';
+
 class DrawerWidget extends StatefulWidget {
   final String? text;
   const DrawerWidget({this.text, super.key});
@@ -108,14 +110,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   }
                 },
               ),
-              ListTile(
-                title: Text("Organization Profile",
-                    style: TextStyle(color: Color.fromARGB(255, 5, 12, 49))),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.pushNamed(context, "/orgProfile");
-                },
-              ),
               Divider(
                 height: 1,
                 thickness: 1,
@@ -143,14 +137,20 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   onChanged: _toggleDarkMode,
                 ),
               ),
-                ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('Logout'),
-              onTap: () {
-                 context.read<UserAuthProvider>().signOut();
-            Navigator.pop(context);
-              },
-            ),
+              ListTile(
+                leading: Icon(Icons.logout),
+                title: Text('Logout'),
+                onTap: () {
+                  context.read<UserAuthProvider>().signOut();
+                  // Navigator.popUntil(context, ModalRoute.withName('/'));
+                  // Navigator.pushReplacementNamed(context, "/");
+                  // Navigator.pushNamed(context, "/");
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SignInPage()),
+                  );
+                },
+              ),
             ],
           ),
         ));

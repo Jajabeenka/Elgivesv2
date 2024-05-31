@@ -65,6 +65,34 @@ class Donation {
     };
   }
 
+Donation copyWith({
+    List<String>? categories,
+    String? pickupOrDropOff,
+    String? weight,
+    String? photo,
+    DateTime? dateTime,
+    String? addresses,
+    String? contactNumber,
+    String? status,
+    String? userId,
+    int? donationId,
+    String? orgId,
+  }) {
+    return Donation(
+      categories: categories ?? this.categories,
+      pickupOrDropOff: pickupOrDropOff ?? this.pickupOrDropOff,
+      weight: weight ?? this.weight,
+      photo: photo ?? this.photo,
+      dateTime: dateTime ?? this.dateTime,
+      addresses: addresses ?? this.addresses,
+      contactNumber: contactNumber ?? this.contactNumber,
+      status: status ?? this.status,
+      userId: userId ?? this.userId,
+      donationId: donationId ?? this.donationId,
+      orgId: orgId ?? this.orgId,
+    );
+  }
+
 }
 
 // DateTime combineDateAndTime(DateTime date, TimeOfDay time) {

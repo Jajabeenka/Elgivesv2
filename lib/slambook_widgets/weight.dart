@@ -81,7 +81,7 @@ class _WeightState extends State<Weight> {
                     width: 2,
                   ),
                 ),
-                hintText: "Enter Name",
+                hintText: "Enter your Weight",
                 hintStyle: TextStyle(color: Colors.grey),
               ),
             ),

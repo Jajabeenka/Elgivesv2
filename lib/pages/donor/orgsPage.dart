@@ -1,14 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../models/organization.dart';
-import '../models/user.dart';
-import '../pages/donatePage.dart';
-import '../models/donation.dart';
-import '../providers/auth_provider.dart';
-import '../providers/user_provider.dart';
-import '../slambook_widgets/drawer.dart';
+import '../../models/organization.dart';
+import '../../models/user.dart';
+import 'donatePage.dart';
+import '../../models/donation.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/user_provider.dart';
+import '../../slambook_widgets/drawer.dart';
 import 'package:provider/provider.dart';
-import '../provider/orgs_provider.dart';
+import '../../provider/orgs_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OrgsPage extends StatefulWidget {
@@ -22,7 +22,9 @@ class _OrgsPageState extends State<OrgsPage> {
     super.initState();
     // Fetch organizations data here
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<UserProvider>(context, listen: false).fetchOrganizations();
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      userProvider.fetchOrganizations();
+      userProvider.fetchDonors();
     });
   }
 
@@ -30,7 +32,7 @@ class _OrgsPageState extends State<OrgsPage> {
   Widget build(BuildContext context) {
     // Stream<QuerySnapshot> donationsListStream =
     //     context.watch<OrganizationProvider>().organization;
-
+    List<String> userAddresses = [];
     final userProvider = Provider.of<UserProvider>(context);
     // final user = context.watch<UserProvider>();
     // final userId = user.selectedUser?.uid;
@@ -56,61 +58,64 @@ class _OrgsPageState extends State<OrgsPage> {
       backgroundColor: Color(0xFFF5F5F5),
       drawer: DrawerWidget(),
       body: StreamBuilder<List<AppUser>>(
-        stream: userProvider.orgStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                "Something went wrong.",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF8D1436),
-                ),
-              ),
-            );
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF01563F)),
-              ),
-            );
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(Icons.group, size: 80, color: Color(0xFF01563F)),
-                  SizedBox(height: 20),
-                  Text(
-                    'No Organizations Yet!',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF01563F),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/');
-                    },
-                    child: Text('GO BACK TO SIGN IN'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF01563F),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+      stream: userProvider.donorStream,
+      builder: (context, donorSnapshot) {
+        if (donorSnapshot.hasError) {
+          return Center(child: Text("Error encountered! ${donorSnapshot.error}"));
+        } else if (donorSnapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (!donorSnapshot.hasData || donorSnapshot.data!.isEmpty) {
+          return const Center(child: Text("No Donor Found"));
+        }
+
+        final donor = donorSnapshot.data!.firstWhere(
+          (user) => user.uid == getUserId(),
+          orElse: () => AppUser(uid: '', email: '', username: '', name: '', contactNumber: '', addresses: [], accountType: 0, status: false, description: "", proof: []),
+        );
+        final userAddresses = donor.addresses;
+
+        return StreamBuilder<List<AppUser>>(
+          stream: userProvider.orgStream,
+          builder: (context, orgSnapshot) {
+            if (orgSnapshot.hasError) {
+              return Center(child: Text("Something went wrong."));
+            } else if (orgSnapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (!orgSnapshot.hasData || orgSnapshot.data!.isEmpty) {
+              return Center(child: 
+              Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(Icons.group, size: 80, color: Color(0xFF01563F)),
+                      SizedBox(height: 20),
+                      Text(
+                        'No Organizations Yet!',
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF01563F),
+                        ),
                       ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-          String? uid = getUserId();
-          final organizations = snapshot.data!;
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/');
+                        },
+                        child: Text('GO BACK TO SIGN IN'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF01563F),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),);
+        }
+
+        final organizations = orgSnapshot.data!;
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: GridView.builder(
@@ -134,9 +139,11 @@ class _OrgsPageState extends State<OrgsPage> {
                         builder: (context) => FormSample(
                           orgName: org.name,
                           orgDescri: org.description,
+                          orgAddresses: org.addresses,
+                          userAddresses: userAddresses,
                           orgStatus: org.status,
                           orgId: org.uid,
-                          userId: uid!,
+                          userId: getUserId()!,
                         ),
                       ),
                     );
@@ -216,7 +223,7 @@ class _OrgsPageState extends State<OrgsPage> {
             ),
           );
         },
-      ),
-    );
+      );},
+    ),);
   }
 }

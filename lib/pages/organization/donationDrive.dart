@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:elgivesv2/api/firebase_donationDrive_api.dart';
+import 'package:elgivesv2/provider/donation_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import '../models/drive.dart';
-import '../provider/donationDrive_provider.dart';
+import '../../models/drive.dart';
+import '../../provider/donationDrive_provider.dart';
 import 'donationDriveModal.dart';
 import 'dart:math';
-import '../slambook_widgets/drawer.dart';
+import '../../slambook_widgets/drawer.dart';
 
 class DonationDrive extends StatefulWidget {
 
@@ -18,6 +19,15 @@ class DonationDrive extends StatefulWidget {
 }
 
 class _DonationDriveState extends State<DonationDrive> {
+  void initState() {
+    super.initState();
+    // Fetch organizations data here
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final donationProvider = Provider.of<DonationDriveProvider>(context, listen: false);
+      donationProvider.fetchDonationDriveList();
+
+    });
+  }
   // final FirestoreService firestoreService = FirestoreService();
   //text controller
   // final TextEditingController textController = TextEditingController();

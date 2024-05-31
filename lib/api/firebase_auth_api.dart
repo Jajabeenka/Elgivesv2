@@ -6,7 +6,6 @@ class FirebaseAuthAPI {
   static final FirebaseAuth auth = FirebaseAuth.instance;
   static final FirebaseFirestore db = FirebaseFirestore.instance;
 
-
   User? getUser() {
     return auth.currentUser;
   }
@@ -34,21 +33,20 @@ class FirebaseAuthAPI {
     }
   }
 
- 
-Future<String?> signIn(String email, String password) async {
+ Future<String?> signIn(String email, String password) async {
   try {
     await auth.signInWithEmailAndPassword(email: email, password: password);
-    
+
     // Fetch user approval status after successful sign-in
     bool? userApprovalStatus = await getUserApprovalStatus();
-    
+
     // Check approval status
     if (userApprovalStatus == false) {
       // If the account is not approved, sign the user out and return an error message
       await signOut();
       return "Your account is not approved.";
     }
-    
+
     return "Successful!";
   } on FirebaseAuthException catch (e) {
     return e.message; // Simplified to return the error message directly
@@ -56,7 +54,6 @@ Future<String?> signIn(String email, String password) async {
     return "Error: $e";
   }
 }
-
 
 
   Future<String?> signUp(
