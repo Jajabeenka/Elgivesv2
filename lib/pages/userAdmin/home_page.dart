@@ -1,6 +1,5 @@
 
 import 'package:elgivesv2/models/user.dart';
-import 'package:elgivesv2/pages/orgProfile.dart';
 import 'package:elgivesv2/pages/orgsPage.dart';
 import 'package:elgivesv2/pages/userAdmin/admin/adminApprovalPage.dart';
 import 'package:elgivesv2/pages/userAdmin/admin/adminHomeScreen.dart';
@@ -43,7 +42,7 @@ class _HomePageState extends State<HomePage> {
           } else if (user!.accountType == 3){
             return  OrgsPage();
           } else {
-            return  OrgProfile();
+            return  OrgsPage();
           }
 
           }
