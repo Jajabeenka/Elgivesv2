@@ -39,7 +39,7 @@ class _DriveNameState extends State<DriveName> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: Text(
-              'Enter Weight:',
+              'Enter Name:',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -57,7 +57,6 @@ class _DriveNameState extends State<DriveName> {
               ),
               validator: (val) {
                 if (val == null || val.isEmpty) return "Enter Name";
-                if (int.tryParse(val) == null) return "Enter Name";
                 return null;
               },
               onChanged: (value) {

@@ -57,7 +57,6 @@ class _DescriptionState extends State<Description> {
               ),
               validator: (val) {
                 if (val == null || val.isEmpty) return "Enter Description";
-                if (int.tryParse(val) == null) return "Enter Description";
                 return null;
               },
               onChanged: (value) {
