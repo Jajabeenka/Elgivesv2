@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import '../models/donation.dart';
+import '../provider/donation_provider.dart';
 
 class DonationWidget extends StatelessWidget {
   final Donation donation;
@@ -260,10 +262,15 @@ class DonationWidget extends StatelessWidget {
   }
 
   Widget cancelDonationButton(BuildContext context) {
+    if (donation.status == 'Cancelled') {
+      return SizedBox.shrink();
+    }
+
     return Center(
       child: ElevatedButton(
         onPressed: () {
-          // Handle cancellation
+          final donationProvider = Provider.of<DonationProvider>(context, listen: false);
+          donationProvider.editStatus(donation.donationId, 'Cancelled');
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.red.shade700,

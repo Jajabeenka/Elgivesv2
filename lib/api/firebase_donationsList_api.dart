@@ -17,6 +17,20 @@ class FirebaseTodoAPI {
     }
   }
 
+  Future<String> editStatus(int donationId, String status) async {
+    try {
+      QuerySnapshot snapshot = await db.collection("donations").where('donationId', isEqualTo: donationId).get();
+      if (snapshot.docs.isNotEmpty) {
+        await snapshot.docs.first.reference.update({'status': status});
+        return "Successfully updated!";
+      } else {
+        return "Donation not found!";
+      }
+    } on FirebaseException catch (e) {
+      return "Error in ${e.code}: ${e.message}";
+    }
+  }
+
   // Future<String> deleteTodo(String id) async {
   //   try {
   //     await db.collection("Friend List").doc(id).delete();

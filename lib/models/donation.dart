@@ -10,6 +10,7 @@ class Donation {
   final String contactNumber;
   final String status;
   final String? userId;
+  final int donationId;
 
   Donation({
     required this.categories,
@@ -21,6 +22,7 @@ class Donation {
     required this.contactNumber,
     required this.status,
     required this.userId,
+    required this.donationId,
   });
 
   // Factory constructor to instantiate object from json format
@@ -35,6 +37,7 @@ class Donation {
       contactNumber: json['contactNumber'] ?? '',
       status: json['status'] ?? '',
       userId: json['userId'],
+      donationId: json['donationId']
     );
   }
 
@@ -54,6 +57,7 @@ class Donation {
       'contactNumber': donation.contactNumber,
       'status': donation.status,
       'userId': donation.userId,
+      'donationId' : donation.donationId
     };
   }
 

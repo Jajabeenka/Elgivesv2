@@ -7,6 +7,7 @@ import '../provider/donation_provider.dart';
 import '../provider/donor_provider.dart';
 import '../slambook_widgets/donations.dart';
 import '../slambook_widgets/drawer.dart';
+import '../slambook_widgets/qr_scanner.dart';
 
 class ProfilePage extends StatelessWidget {
   @override
@@ -23,28 +24,9 @@ class ProfilePage extends StatelessWidget {
       ),
       extendBodyBehindAppBar: true,
       drawer: DrawerWidget(),
-      body: StreamBuilder(
-        stream: donorsListStream,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text("Error encountered! ${snapshot.error}"),
-            );
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(
-              child: Text("No Donors Found"),
-            );
-          }
-          Donor donor = Donor.fromJson(snapshot.data?.docs[0].data() as Map<String, dynamic>);
-          var id = snapshot.data?.docs[0].id;
-
-          return Stack(
-            children: [
-              Container(
+      body: Stack(
+        children: [
+          Container(
                 height: 170,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -57,7 +39,26 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
               ),
-              SingleChildScrollView(
+          StreamBuilder(
+            stream: donorsListStream,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text("Error encountered! ${snapshot.error}"),
+                );
+              } else if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return const Center(
+                  child: Text("No Donors Found"),
+                );
+              }
+              Donor donor = Donor.fromJson(snapshot.data?.docs[0].data() as Map<String, dynamic>);
+              var id = snapshot.data?.docs[0].id;
+
+              return SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
@@ -214,10 +215,23 @@ class ProfilePage extends StatelessWidget {
                     ],
                   ),
                 ),
-              ),
-            ],
-          );
-        },
+              );
+            },
+          ),
+          Positioned(
+            bottom: 16.0,
+            right: 16.0,
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ScanQRCode()),
+                );
+              },
+              child: Icon(Icons.qr_code_scanner),
+            ),
+          ),
+        ],
       ),
     );
   }

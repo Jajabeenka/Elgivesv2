@@ -28,7 +28,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     return Theme(
       data: ThemeData(
         brightness: brightness,
-        backgroundColor: backgroundColor,
+        scaffoldBackgroundColor: backgroundColor,
       ),
       child: Drawer(
       child: ListView(

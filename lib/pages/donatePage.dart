@@ -2,6 +2,8 @@ import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
+import 'dart:math';
+import 'dart:math';
 
 import 'package:elgivesv2/models/donor.dart';
 import 'package:flutter/foundation.dart';
@@ -55,6 +57,18 @@ class _FormSampleState extends State<FormSample> {
   String addresses = "";
   String contact = "";
   String status = "Pending";
+  int donationId = 0;
+
+  int generateUniqueId() {
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final random = Random().nextInt(900) + 100; // Generate a random number between 100 and 999
+    return int.parse('${now}${random}');
+  }
+
+  void initState() {
+    super.initState();
+    donationId = generateUniqueId();  // Set once during initialization
+  }
 
   void resetFields() {
   setState(() {
@@ -188,6 +202,7 @@ String? getUserId() {
 }
   @override
   Widget build(BuildContext context) {
+    // donationId = generateUniqueId(); 
     DateTime initialDateTime = DateTime.now();
     pickDrop = Mode(
       initialValue: 'Pickup', 
@@ -452,6 +467,7 @@ String? getUserId() {
                   contact = value;
                 });
               }),
+              
               SizedBox(height: 20,),
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.85,
@@ -484,6 +500,7 @@ String? getUserId() {
                               contactNumber: contact,
                               status: "Pending",
                               userId: "ndowdbnowdb",
+                              donationId: donationId,
                             );
                             setState(() {
                               showText = true;
@@ -525,7 +542,7 @@ String? getUserId() {
         ),
         onPressed: (dateTime.isBefore(DateTime.now())) ? null : () {
           setState(() {
-            data = "Status: Pending \nDate Created: ${dateTime.toString()}";
+            data = "Status: $status \nDate Created: ${dateTime.toString()}\n donationId: ${donationId.toString()}";
           });
           showDialog(
             context: context,
