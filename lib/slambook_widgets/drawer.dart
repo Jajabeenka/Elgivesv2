@@ -37,6 +37,13 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               Navigator.pushNamed(context, "/donorProfile");
             },
           ),
+          ListTile(
+            title: Text("Organization Profile", style: TextStyle(color: Color.fromARGB(255, 5, 12, 49))),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, "/orgProfile");
+            },
+          ),
         ],
       ),
     );

@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'EWAN Q PA',
-      initialRoute: '/orgProfile',
+      initialRoute: '/',
       routes: { 
         '/organizations': (context) => OrgsPage(),
         '/donatePage': (context) => FormSample(),

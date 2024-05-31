@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import '../slambook_widgets/drawer.dart';
 
 class OrgProfile extends StatelessWidget {
 
@@ -14,6 +15,7 @@ class OrgProfile extends StatelessWidget {
               ),
         backgroundColor: const Color.fromARGB(255, 8, 64, 60),
       ),
+      drawer: DrawerWidget(),
       body: Container(
         decoration: const BoxDecoration(
           color: Color(0xFF9F1010),
@@ -39,8 +41,6 @@ class OrgProfile extends StatelessWidget {
                   //org logo and name
                   Row(
                     children: [
-                      Text('<logo>', style: TextStyle(color: Color(0xFF9F1010))),
-                      SizedBox(width: 20.0),
                       Text('Elgives Charity', style: TextStyle(color: Color(0xFF9F1010), fontWeight: FontWeight.bold)),
                       Spacer(),
                         //edit button

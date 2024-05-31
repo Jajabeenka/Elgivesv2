@@ -8,6 +8,7 @@ import '../slambook_widgets/description.dart';
 import '../models/drive.dart';
 import 'package:provider/provider.dart';
 import '../provider/donationDrive_provider.dart';
+import '../slambook_widgets/drawer.dart';
 // class AddDrivePage extends StatelessWidget {
 //   const AddDrivePage({super.key});
 
@@ -116,6 +117,7 @@ class _AddDrivePageState extends State<AddDrivePage> {
         iconTheme: IconThemeData(color: Color(0xFF8D1436)),
       ),
       backgroundColor: Color(0xFF8D1436),
+      drawer: DrawerWidget(),
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
