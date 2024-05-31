@@ -6,6 +6,8 @@ import 'package:elgivesv2/pages/userAdmin/admin/adminApprovalPage.dart';
 import 'package:elgivesv2/pages/userAdmin/admin/adminDonors.dart';
 import 'package:elgivesv2/provider/donationDrive_provider.dart';
 import 'package:elgivesv2/provider/donor_provider.dart';
+import 'package:elgivesv2/providers/auth_provider.dart';
+import 'package:elgivesv2/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -32,6 +34,8 @@ Future<void> main() async {
         ChangeNotifierProvider(create: ((context) => OrganizationProvider())),
         ChangeNotifierProvider(create: ((context) => DonorProvider())),
         ChangeNotifierProvider(create: ((context) => DonationDriveProvider())),
+        ChangeNotifierProvider(create: ((context) => UserAuthProvider())),
+        ChangeNotifierProvider(create: ((context) => UserProvider())),
       ],
       child: MyApp(),
     ),
@@ -55,7 +59,6 @@ class MyApp extends StatelessWidget {
         '/addDrivePage': (context) => AddDrivePage(),
         '/adminApproval': (context) => adminApproval(),
         '/adminDonors': (context) => DonorListWidget()
-
       },
       theme: ThemeData(
         primarySwatch: MaterialColor(0xFF00FF00, {
