@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
-class Weight extends StatefulWidget {
+class DriveName extends StatefulWidget {
   final Function callback;
-  const Weight(this.callback, {super.key});
+  const DriveName(this.callback, {super.key});
 
   @override
-  State<Weight> createState() => _WeightState();
+  State<DriveName> createState() => _DriveNameState();
 }
 
-class _WeightState extends State<Weight> {
-  final TextEditingController _weightController = TextEditingController();
+class _DriveNameState extends State<DriveName> {
+  final TextEditingController _driveNameController = TextEditingController();
 
   @override
   void dispose() {
-    _weightController.dispose();
+    _driveNameController.dispose();
     super.dispose();
   }
 
@@ -50,14 +50,14 @@ class _WeightState extends State<Weight> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20), // Padding added here
             child: TextFormField(
-              controller: _weightController,
+              controller: _driveNameController,
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 16,
               ),
               validator: (val) {
-                if (val == null || val.isEmpty) return "Enter a Weight";
-                if (int.tryParse(val) == null) return "Enter a valid Weight";
+                if (val == null || val.isEmpty) return "Enter Name";
+                if (int.tryParse(val) == null) return "Enter Name";
                 return null;
               },
               onChanged: (value) {
