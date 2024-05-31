@@ -6,7 +6,7 @@ class Drive {
   String driveName;
   String? description;
   String? orgId;
-  String? donationList;
+  List<String>? donationList;
   //final List<String> donations;
 
   Drive({

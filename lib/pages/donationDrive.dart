@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../models/drive.dart';
 import '../provider/donationDrive_provider.dart';
 import 'donationDriveModal.dart';
+import 'dart:math';
 
 class DonationDrive extends StatefulWidget {
 
@@ -113,7 +114,18 @@ class _DonationDriveState extends State<DonationDrive> {
           );
         },
       ),
-      
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => DonationDriveModal(
+              type: 'Add',
+              item: null,
+            ),
+          );
+        },
+        child: const Icon(Icons.add_outlined),
+      ),
 
     );
   }

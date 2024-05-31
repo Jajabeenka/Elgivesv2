@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/drive.dart';
 import '../provider/donationDrive_provider.dart';
+import 'dart:math';
 
 class DonationDriveModal extends StatelessWidget {
   final String type;
@@ -45,6 +46,8 @@ class DonationDriveModal extends StatelessWidget {
   }
 
   TextButton _dialogAction(BuildContext context) {
+    Random random = new Random();
+
     return TextButton(
       onPressed: () {
         switch (type) {
@@ -52,7 +55,7 @@ class DonationDriveModal extends StatelessWidget {
             {
               // Instantiate a todo objeect to be inserted, default userID will be 1, the id will be the next id in the list
               Drive temp = Drive(
-                  driveId: 1,
+                  driveId: (random.nextInt(999999)+1) * (random.nextInt(99)+1),
                   driveName: _formFieldController.text,
                   );
 

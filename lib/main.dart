@@ -43,8 +43,8 @@ class MyApp extends StatelessWidget {
       title: 'EWAN Q PA',
       initialRoute: '/orgProfile',
       routes: { 
-        // '/organizations': (context) => OrgsPage(),
-        // '/donatePage': (context) => FormSample(),
+        '/organizations': (context) => OrgsPage(),
+        '/donatePage': (context) => FormSample(),
         '/donorProfile': (context) => ProfilePage(),
         '/orgProfile': (context) => OrgProfile(),
         '/donationDrive': (context) => DonationDrive(),
